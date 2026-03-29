@@ -1,0 +1,5 @@
+Repository inviata a Render o Heroku.
+Contiene i server/middleware Node.js con directory isolate per singole funzioni 
+    come API per esporre gli endpoint al frontend, webhooks per ricevere e validare le conferme di pagamento da Stripe, 
+    DB per i modelli relazionali di PostgreSQL, Redis per il ricalcolo delle classifiche, 
+    web3 oppure xrpl per gli script di aggregazione dei lotti ed il calcolo della Merkle Root ed il broadcast della transazione al ledger pubblico.
