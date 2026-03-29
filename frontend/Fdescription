@@ -1,0 +1,5 @@
+Repository esposta tramite Vercel.
+Contiene unicamente il Next.js relativo al client, suddiviso in sottocartelle come UI, mappe, grafiche dell’album 
+    ed i file di configurazione della PWA quindi manifest e service workers 
+    e le logiche client-side per interrogare il server. 
+Sono da EVITARE chiavi private o seed crittografici o logiche di connessione diretta ai database.
