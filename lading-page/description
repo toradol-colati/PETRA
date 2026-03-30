@@ -1,4 +1,0 @@
-Codice del sito istituzionale della holding Petra. 
-È un applicativo statico, privo di logiche transazionali, 
-    progettato per caricarsi in millisecondi, indicizzarsi sui motori di ricerca e attrarre partner. 
-Vercel estrarrà unicamente questa cartella e la pubblicherà sul dominio radice (petra.com).
