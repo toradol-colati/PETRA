@@ -1,23 +1,17 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import Manifesto from "@/components/Manifesto";
-import Mechanics from "@/components/Mechanics";
-import Registry from "@/components/Registry";
-import Partners from "@/components/Partners";
+import System from "@/components/System";
+import Network from "@/components/Network";
 import Footer from "@/components/Footer";
-
+ 
 export default function Home() {
   return (
-    <>
+    <main className="min-h-screen bg-ivory selection:bg-crimson selection:text-parchment">
       <Navbar />
-      <main>
-        <Hero />
-        <Manifesto />
-        <Mechanics />
-        <Registry />
-        <Partners />
-      </main>
+      <Hero />
+      <System />
+      <Network />
       <Footer />
-    </>
+    </main>
   );
 }

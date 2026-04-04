@@ -9,33 +9,26 @@ const config: Config = {
     extend: {
       colors: {
         ivory: {
-          DEFAULT: "#F5F0EB",
-          deep: "#EDE6DD",
+          DEFAULT: "#FBFBF9",
+          deep: "#F2F0EA",
         },
         crimson: {
-          light: "#A62B2B",
-          DEFAULT: "#8B1A1A",
-          dark: "#6B1010",
+          DEFAULT: "#921416",
+          dark: "#630D0E",
         },
         carbon: {
-          soft: "#2E2E2E",
-          DEFAULT: "#1A1A1A",
+          soft: "#333333",
+          DEFAULT: "#141414",
         },
         stone: {
-          pale: "#D4CFC8",
-          DEFAULT: "#9A9488",
-          light: "#B8B0A4",
+          pale: "#E5E1DA",
+          DEFAULT: "#8C867A",
         },
         parchment: "#FDFCFA",
       },
       fontFamily: {
-        display: [
-          "Playfair Display",
-          "Georgia",
-          "Times New Roman",
-          "serif",
-        ],
-        body: ["DM Sans", "Helvetica Neue", "Arial", "sans-serif"],
+        display: ['var(--font-serif)'],
+        body: ['var(--font-sans)'],
       },
       letterSpacing: {
         institutional: "0.35em",

@@ -1,51 +1,62 @@
+import Image from "next/image";
+ 
 export default function Hero() {
   return (
-    <section className="min-h-screen flex flex-col justify-center px-6 md:px-10 pt-32 pb-16 relative bg-ivory">
-      <p className="font-body text-[0.72rem] font-semibold tracking-eyebrow uppercase text-crimson mb-8 animate-fade-up">
-        Infrastruttura per la conservazione del patrimonio
-      </p>
-
-      <h1 className="font-display text-[clamp(3.2rem,7vw,7.5rem)] font-extrabold leading-monumental tracking-tight text-carbon max-w-[900px] mb-10 animate-fade-up animation-delay-200">
-        Il registro{" "}
-        <em className="italic font-medium text-crimson">immutabile</em>{" "}
-        del patrimonio mondiale
-      </h1>
-
-      <p className="font-body text-[clamp(1rem,1.3vw,1.25rem)] font-light leading-relaxed text-carbon-soft max-w-[600px] mb-14 animate-fade-up animation-delay-400">
-        Notarizzazione crittografica delle micro-donazioni destinate al
-        restauro architettonico. Ogni contributo verificabile. Ogni centesimo
-        tracciabile.
-      </p>
-
-      <div className="animate-fade-up animation-delay-600">
-        <p className="font-body text-[0.72rem] font-semibold tracking-[0.3em] uppercase text-stone mb-4">
-          Progetti attivi
-        </p>
-        <div className="flex gap-4 flex-wrap">
-          <a
-            href="#"
-            className="group font-body text-xs font-semibold tracking-wide uppercase text-carbon border-[1.5px] border-carbon px-8 py-3.5 inline-flex items-center gap-2.5 relative overflow-hidden transition-all duration-300 hover:text-ivory hover:border-crimson"
-          >
-            <span className="absolute inset-0 bg-crimson w-0 group-hover:w-full transition-all duration-300 -z-10" />
-            Venezia
-            <span className="text-[0.75rem] group-hover:translate-x-1 transition-transform duration-300">
-              →
-            </span>
-          </a>
-          <span className="font-body text-xs font-semibold tracking-wide uppercase text-stone border-[1.5px] border-stone-pale px-8 py-3.5 cursor-default">
-            Prossimamente
-          </span>
+    <section className="flex flex-col items-center w-full bg-ivory">
+      
+      {/* Schermata Iniziale: Solo Logo e Titolo */}
+      <div className="min-h-screen w-full flex flex-col items-center justify-center pt-20 px-6 md:px-10">
+        <div className="mb-0">
+         <Image
+           src="/Petra-logo.svg"
+           alt="Petra"
+           width={432}
+           height={432}
+           className="w-[432px] h-[432px] object-contain opacity-[0.95]"
+         />
+        </div>
+ 
+        <h1 className="font-display text-[clamp(3rem,7vw,6.5rem)] font-bold tracking-[0.35em] uppercase text-carbon text-center">
+          P&nbsp;E&nbsp;T&nbsp;R&nbsp;A
+        </h1>
+      </div>
+ 
+      {/* Sezione di transizione: Divider e Pilastri */}
+      <div className="w-full bg-ivory-deep flex flex-col items-center px-6 md:px-10 py-32 border-t border-stone-pale/50">
+        <div className="w-full max-w-[1200px] h-px bg-carbon/10 mb-16" />
+ 
+        <div className="w-full max-w-[1200px] grid grid-cols-1 md:grid-cols-3 gap-0 border border-carbon/10">
+          {[
+            {
+              eyebrow: "Missione",
+              text: "Preservare il patrimonio culturale dell'umanità.",
+            },
+            {
+              eyebrow: "Protocollo",
+              text: "Trasparente, permanente, immutabile.",
+            },
+            {
+              eyebrow: "Impatto",
+              text: "Permettiamo a tutti di esserne custodi attivi ed ai responsabili di navigare tra gli alti costi di restauro.",
+            },
+          ].map((pillar, i) => (
+            <div
+              key={i}
+              className={`p-10 bg-ivory/50 hover:bg-white transition-all duration-500 ease-in-out group ${
+                i < 2 ? "border-b md:border-b-0 md:border-r border-carbon/10" : ""
+              }`}
+            >
+              <h3 className="font-body text-xs font-bold tracking-[0.2em] uppercase text-crimson mb-6 group-hover:translate-x-1 transition-transform duration-500">
+                {pillar.eyebrow}
+              </h3>
+              <p className="font-body text-sm font-light leading-[1.85] text-carbon-soft">
+                {pillar.text}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
 
-      <div className="absolute bottom-10 left-6 md:left-10 hidden md:flex items-center gap-4 animate-fade-up animation-delay-800">
-        <div className="w-10 h-px bg-stone-light relative overflow-hidden">
-          <span className="absolute inset-0 bg-crimson animate-scroll-pulse" />
-        </div>
-        <span className="font-body text-[0.72rem] font-medium tracking-[0.2em] uppercase text-stone">
-          Scorri
-        </span>
-      </div>
     </section>
   );
 }
