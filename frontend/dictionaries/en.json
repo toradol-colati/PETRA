@@ -1,0 +1,194 @@
+{
+  "nav": {
+    "protocol": "Protocol",
+    "network": "Network",
+    "problem": "The Problem",
+    "about": "About Us",
+    "langSwitch": "IT"
+  },
+  "hero": {
+    "subtitle": "Securing cultural heritage through a global patronage protocol",
+    "pillars": [
+      { "eyebrow": "Mission", "text": "Preserving humanity's cultural heritage." },
+      { "eyebrow": "Protocol", "text": "Transparent, permanent, immutable." },
+      { "eyebrow": "Impact", "text": "We enable everyone to become active custodians and help stakeholders navigate the high costs of restoration." }
+    ]
+  },
+  "system": {
+    "sidebarLabel": "PROTOCOL",
+    "blockA": {
+      "title": "How It Works",
+      "description": "Petra simplifies the mobilization of micro-donations by directly connecting architectural assets to visitors.",
+      "steps": [
+        { "num": "01", "title": "Scan", "desc": "the QR code at the construction site." },
+        { "num": "02", "title": "Donate", "desc": "the amount you prefer, starting from €3.50." },
+        { "num": "03", "title": "Receive", "desc": "a verifiable cryptographic certificate, unique to your donation." }
+      ]
+    },
+    "blockB": {
+      "title": "The Certificate",
+      "description": "Every donation is mathematically anchored on a public distributed ledger (XRPL).",
+      "cards": [
+        { "icon": "◈", "title": "Unique", "desc": "each certificate is derived from the hash of your specific donation — no two certificates are alike." },
+        { "icon": "▣", "title": "Verifiable", "desc": "anyone can verify authenticity by comparing the cryptographic proof against the public XRPL ledger, without trusting Petra." },
+        { "icon": "§", "title": "Permanent", "desc": "once anchored on the ledger, the certificate cannot be altered or deleted." }
+      ]
+    },
+    "blockC": {
+      "title": "Where Funds Go",
+      "description": "A disintermediated model to maximize impact on architectural restoration.",
+      "features": [
+        { "title": "Directly to the beneficiary", "desc": "funds are automatically transferred to the account of the local entity responsible for restoration, without passing through Petra." },
+        { "title": "Traceable", "desc": "every transaction is recorded and viewable in the public transparency dashboard." }
+      ]
+    }
+  },
+  "network": {
+    "sidebarLabel": "Network",
+    "projectsTitle": "Active Projects",
+    "projectsDescription": "Each project has its own interface. We guarantee interoperability and continuity of every donor's account.",
+    "venice": {
+      "city": "Venice",
+      "status": "Validation phase",
+      "description": "Petra's first pilot project. Validation expected in 2027.",
+      "longDescription": "Venice represents the ideal case for the Petra protocol. With fewer than 50,000 residents and over 30 million annual visitors, the city generates a volume of tourism that could significantly contribute to the maintenance of its architectural fabric. The pilot project will focus on historic center facades, identifying the first construction sites in collaboration with local institutions.",
+      "timeline": "Expected launch: 2027",
+      "target": "Historic center facades",
+      "partner": "To be defined"
+    },
+    "partnerTitle": "Become a Partner",
+    "partners": [
+      { "icon": "§", "title": "Non-profit organization", "desc": "Explore the possibility of collaborating with Petra.", "link": "Collaborate (email)" },
+      { "icon": "◈", "title": "Business", "desc": "Align your brand with the protection of artistic heritage.", "link": "Become a partner (email)" }
+    ]
+  },
+  "footer": {
+    "brand": "for the protection of cultural heritage.",
+    "systemLabel": "System",
+    "systemLinks": ["Protocol", "The Certificate", "Where Funds Go"],
+    "networkLabel": "Network",
+    "activeProjects": "Active Projects",
+    "becomePartner": "Become a Partner",
+    "contacts": "Contacts",
+    "institutionsLink": "For Institutions",
+    "transparencyLink": "Transparency",
+    "legalLabel": "Legal",
+    "privacyLink": "Privacy Policy",
+    "termsLink": "Terms of Service",
+    "copyright": "© 2026 PETRA — Protocol for Cultural Heritage.",
+    "cookieText": "Cookie and Privacy"
+  },
+  "problem": {
+    "title": "The Problem",
+    "intro": "Walk through a calle in Venice, an alley in Naples, a corso in Palermo. Look up. The facades that define these places — the reason millions of people cross the world to see them — are falling apart. Not through negligence, but through a systemic failure.",
+    "diagnosisTitle": "The diagnosis",
+    "diagnosis": [
+      "Private architectural heritage in Italian historic centers lives an economic paradox. The facades of a historic building generate public value — landscape, cultural identity, tourist appeal — but the cost of maintaining them falls entirely on the private owner. It is a textbook case of an uncompensated positive externality.",
+      "The owner pays. The tourist benefits. The owner stops paying. The tourist keeps coming, until there is nothing left to see. The result is chronic underinvestment in maintenance: not because owners don't care, but because the market fails to transfer to them the value their facades create."
+    ],
+    "bottlenecksTitle": "Three structural obstacles",
+    "bottlenecks": [
+      { "title": "Capital", "text": "Restoring a historic facade is expensive. For the private owner, it is a sunk cost: the value it generates — a more attractive urban landscape, a more livable city — is captured by the public, not by the one who pays. In the absence of compensation mechanisms, underinvestment is rational." },
+      { "title": "Coordination", "text": "Many historic buildings are under condominium ownership: multiple owners, divergent interests, fragmented decision-making. Even when the will exists, there is no infrastructure to coordinate the intervention, aggregate resources, and manage the relationship with heritage authorities." },
+      { "title": "Authorization", "text": "Heritage protection regulations safeguard the patrimony, but in the absence of streamlined approval processes, they discourage even owners who want to act. The result is a system where restoring is harder than letting decay." }
+    ],
+    "note": "Petra addresses the first obstacle: capital. It does so with a mechanism that transfers a micro-fraction of tourist value directly to those who steward the heritage. Coordination and authorization problems require different institutional reforms — but without resources, any reform would remain on paper.",
+    "impact": {
+      "title": "Impact Projection",
+      "subtitle": "Three scenarios illustrating the model's potential, assuming an urban context with high tourist footfall and an average donation of €5.",
+      "scenarioLabel": "Scenario",
+      "visitorsLabel": "Key variable: conversion rate",
+      "conversionLabel": "Conversion",
+      "avgLabel": "Avg. donation",
+      "revenueLabel": "Annual revenue",
+      "facadesLabel": "Avg. cost per intervention"
+    }
+  },
+  "about": {
+    "title": "About Us",
+    "intro": "Petra was born from a simple question: why don't the millions of people who visit Italy's art cities every year contribute directly to the conservation of what they came to see?",
+    "missionTitle": "The mission",
+    "mission": "We are not a restoration association. We are not a crowdfunding platform. Petra is a protocol — a digital infrastructure that connects the tourist gesture to the maintenance need. A QR code on a scaffold. A €5 donation. A cryptographic certificate proving where every cent went. Our goal is to make contributing to beauty as natural as taking a photo.",
+    "teamTitle": "Who's behind it",
+    "team": [
+      { "name": "Umberto Toraldo", "role": "Founder", "bio": "Economics student, developer, researcher. He dedicated his bachelor's thesis to the ex-ante evaluation of crowdfunding as a financing tool for private architectural heritage in Venice. Petra is the operational translation of that research: an attempt to field-test a hypothesis born in the data." }
+    ],
+    "thesisTitle": "From research to protocol",
+    "thesis": "Petra is not an idea born by chance. It stems from academic research that analyzed the gap between tourists' willingness-to-pay for heritage conservation and the absence of tools to capture it. The thesis identified the conditions under which a voluntary micro-donation model can be economically sustainable. Petra is the test of those conditions.",
+    "supportTitle": "Support Network",
+    "supporters": [
+      { "name": "Solid Venice", "desc": "Informal incubator and bridge to Venetian institutions. The first environment where the idea was validated." },
+      { "name": "Xerox", "desc": "Strategic mentorship on scalability and operating model." }
+    ],
+    "contactTitle": "Let's talk",
+    "email": "info@petra-protocol.org",
+    "linkedin": "LinkedIn"
+  },
+  "institutions": {
+    "title": "For Institutions",
+    "intro": "Petra offers local administrations and cultural institutions a digital infrastructure to mobilize tourist micro-donations towards the restoration of architectural heritage in their territory.",
+    "howTitle": "How it works for you",
+    "steps": [
+      { "num": "01", "title": "Partnership", "desc": "We sign a collaboration agreement. Petra provides the infrastructure, the institution identifies the construction sites." },
+      { "num": "02", "title": "Operations", "desc": "QR codes installed at construction sites. Donations go directly to your account via Stripe Connect." },
+      { "num": "03", "title": "Data", "desc": "You receive quarterly reports and tourist willingness-to-pay data, usable for your policy decisions." }
+    ],
+    "cta": "Write to us for an assessment"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "April 2026",
+    "sections": [
+      { "title": "Data Controller", "content": "The data controller is PETRA Protocol. For any request regarding data processing: info@petra-protocol.org." },
+      { "title": "Data Collected", "content": "We collect the following data: email address (for donation-related communications), donation amounts and details, browsing data through technical cookies, and a Shadow DID (pseudonymized identifier generated by the system)." },
+      { "title": "Purpose of Processing", "content": "Data is processed for: donation management and issuance of cryptographic certificates, communications regarding project status, and service improvement." },
+      { "title": "Legal Basis", "content": "Processing is based on: contract execution (for donations and certificates), data subject consent (for communications), and legitimate interest of the controller (for service operation and security)." },
+      { "title": "Data Retention", "content": "Data is retained for the time necessary for the stated purposes. Cryptographic certificates, by their nature, are permanent and immutable once anchored on XRP Ledger." },
+      { "title": "Data Subject Rights", "content": "The data subject has the right to access, rectification, erasure, portability, objection, and restriction of processing. To exercise your rights: info@petra-protocol.org." },
+      { "title": "Cookies", "content": "We exclusively use technical cookies necessary for the website's operation. We do not use profiling cookies or third-party cookies for advertising purposes." },
+      { "title": "Contact", "content": "For any privacy-related request: info@petra-protocol.org." }
+    ]
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "lastUpdated": "April 2026",
+    "sections": [
+      { "title": "Service Description", "content": "Petra is a non-profit platform that facilitates micro-donations for the restoration of private architectural heritage in art cities. The service is provided free of charge to donors." },
+      { "title": "Donations", "content": "Donations made through Petra are voluntary and non-refundable. Funds are transferred directly to the account of the local entity responsible for restoration via Stripe Connect, without passing through Petra's accounts." },
+      { "title": "Cryptographic Certificates", "content": "For each donation, Petra issues a verifiable cryptographic certificate, anchored on XRP Ledger. The certificate attests to the donation but does not confer property rights, credits, or any other real or personal rights." },
+      { "title": "Intellectual Property", "content": "The name \"Petra\", the logo, the protocol, and all website content are intellectual property of Petra Protocol and are protected by applicable law." },
+      { "title": "Limitation of Liability", "content": "Petra does not guarantee the completion of restoration projects. Funds are transferred to the responsible entities, which independently manage the planning and execution of interventions." },
+      { "title": "Amendments", "content": "Petra reserves the right to modify these terms at any time. Changes will be published on this page, and continued use of the service implies acceptance of the new terms." },
+      { "title": "Applicable Law and Jurisdiction", "content": "These terms are governed by Italian law. For any dispute, the Court of Venice has jurisdiction." }
+    ]
+  },
+  "transparency": {
+    "title": "Transparency",
+    "intro": "Every donation collected through Petra is mathematically verifiable. This public registry shows all donation batches anchored on XRP Ledger.",
+    "tableHeaders": {
+      "id": "Batch ID",
+      "donations": "Donations",
+      "rootHash": "Merkle Root",
+      "xrplTx": "XRPL TX",
+      "status": "Status",
+      "date": "Date"
+    },
+    "emptyState": "No batches registered yet. The first batch will be published with the launch of the Venice pilot project in 2027.",
+    "howTitle": "How verification works",
+    "howSteps": [
+      "Each donation generates a unique cryptographic hash (leaf hash).",
+      "Periodically, leaf hashes are aggregated into a Merkle tree.",
+      "The Merkle root is published as a transaction on XRP Ledger.",
+      "Anyone can verify that a specific donation is included in the batch by comparing the cryptographic proof against the public registry."
+    ]
+  },
+  "projectPage": {
+    "statusLabel": "Status",
+    "timelineLabel": "Timeline",
+    "targetLabel": "Target",
+    "partnerLabel": "Partner",
+    "backLink": "← Back to home",
+    "notFound": "Project not found",
+    "notFoundDesc": "The requested project does not exist or is not yet active."
+  }
+}

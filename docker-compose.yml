@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: petra
+      POSTGRES_PASSWORD: petra_dev
+      POSTGRES_DB: petra
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U petra"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    ports:
+      - "4000:4000"
+    environment:
+      DATABASE_URL: postgresql://petra:petra_dev@db:5432/petra
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      XRPL_MASTER_SEED: ${XRPL_MASTER_SEED}
+      XRPL_NETWORK: testnet
+      SHADOW_DID_SECRET: ${SHADOW_DID_SECRET}
+      SESSION_SECRET: ${SESSION_SECRET}
+      API_KEY: ${API_KEY}
+      NODE_ENV: development
+      LOG_LEVEL: info
+      PORT: 4000
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

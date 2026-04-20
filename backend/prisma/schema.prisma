@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(uuid())
+  email     String     @unique
+  shadowDID String     @unique
+  didSalt   String     @default(uuid())
+  createdAt DateTime   @default(now())
+  donations Donation[]
+}
+
+model Donation {
+  id                    String   @id @default(uuid())
+  amount                Int      // centesimi, MAI float
+  currency              String   @default("EUR")
+  timestamp             DateTime @default(now())
+  leafHash              String
+  vcData                Json?
+  nonce                 String   @unique
+  batched               Boolean  @default(false)
+  stripePaymentIntentId String?  @unique
+  locationId            String
+  project               Project  @relation(fields: [locationId], references: [id])
+  user                  User     @relation(fields: [userId], references: [id])
+  userId                String
+  batch                 Batch?   @relation(fields: [batchId], references: [id])
+  batchId               String?
+
+  @@index([batched, timestamp])
+  @@index([locationId])
+}
+
+enum BatchStatus {
+  PENDING
+  COMMITTED
+  FAILED
+}
+
+model Batch {
+  id          String      @id @default(uuid())
+  rootHash    String      @unique
+  xrplTxHash  String?     @unique
+  status      BatchStatus @default(PENDING)
+  leafCount   Int         @default(0)
+  totalAmount Int         @default(0)
+  createdAt   DateTime    @default(now())
+  donations   Donation[]
+}
+
+enum ProjectStatus {
+  VALIDATING
+  ACTIVE
+  COMPLETED
+}
+
+model Project {
+  id               String        @id @default(uuid())
+  title            String
+  city             String
+  shortDescription String
+  status           ProjectStatus @default(VALIDATING)
+  stripeAccountId  String?
+  donations        Donation[]
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  action    String
+  entity    String
+  entityId  String?
+  data      Json?
+  requestId String?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([entity, entityId])
+  @@index([createdAt])
+}

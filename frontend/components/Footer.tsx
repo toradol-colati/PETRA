@@ -1,4 +1,12 @@
-export default function Footer() {
+import Link from "next/link";
+import type { Dictionary } from "@/app/dictionaries";
+
+interface FooterProps {
+  dict: Dictionary["footer"];
+  lang: string;
+}
+
+export default function Footer({ dict, lang }: FooterProps) {
   return (
     <footer className="bg-carbon text-stone border-t border-crimson py-24 px-6 md:px-10">
       <div className="max-w-[1200px] mx-auto">
@@ -8,96 +16,91 @@ export default function Footer() {
             <div className="font-display text-2xl font-bold tracking-[0.35em] uppercase text-ivory mb-6">
               P&nbsp;E&nbsp;T&nbsp;R&nbsp;A
             </div>
-            <p className="font-body text-xs font-light leading-relaxed text-stone-light max-w-[280px] opacity-70">
-              per la tutela del patrimonio culturale.
+            <p className="font-body text-xs font-light leading-relaxed text-stone max-w-[280px] opacity-70">
+              {dict.brand}
             </p>
           </div>
- 
+
           {/* Sistema */}
           <div>
             <div className="font-body text-[10px] font-bold tracking-[0.25em] uppercase text-crimson mb-8">
-              Sistema
+              {dict.systemLabel}
             </div>
             <ul className="flex flex-col gap-3.5">
-              <li>
-                <a href="#sistema" className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
-                  Protocollo
-                </a>
-              </li>
-              <li>
-                <a href="#sistema" className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
-                  Petra Cards e Petri
-                </a>
-              </li>
-              <li>
-                <a href="#sistema" className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
-                  Web App e Mappe
-                </a>
-              </li>
+              {dict.systemLinks.map((label) => (
+                <li key={label}>
+                  <a href="#sistema" className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
+                    {label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
- 
+
           {/* Network */}
           <div>
             <div className="font-body text-[10px] font-bold tracking-[0.25em] uppercase text-crimson mb-8">
-              Network
+              {dict.networkLabel}
             </div>
             <ul className="flex flex-col gap-3.5">
               <li>
                 <a href="#network" className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
-                  Progetti Attivi
+                  {dict.activeProjects}
                 </a>
               </li>
               <li>
                 <a href="#network" className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
-                  Diventa Partner
+                  {dict.becomePartner}
                 </a>
               </li>
               <li>
-                <a href="#" className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
-                  Whitepaper
+                <a href="mailto:info@petra-protocol.org" className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
+                  {dict.contacts}
                 </a>
+              </li>
+              <li>
+                <Link href={`/${lang}/per-gli-enti`} className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
+                  {dict.institutionsLink}
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${lang}/trasparenza`} className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
+                  {dict.transparencyLink}
+                </Link>
               </li>
             </ul>
           </div>
- 
-          {/* Istituzionale */}
+
+          {/* Legal */}
           <div>
             <div className="font-body text-[10px] font-bold tracking-[0.25em] uppercase text-crimson mb-8">
-              Legal
+              {dict.legalLabel}
             </div>
             <ul className="flex flex-col gap-3.5">
               <li>
-                <a href="#" className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
-                  Termini di Servizio
-                </a>
+                <Link href={`/${lang}/privacy`} className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
+                  {dict.privacyLink}
+                </Link>
               </li>
               <li>
-                <a href="#" className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
-                  Privacy Policy
-                </a>
-              </li>
-              <li>
-                <a href="#" className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
-                  Licenze
-                </a>
+                <Link href={`/${lang}/termini`} className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
+                  {dict.termsLink}
+                </Link>
               </li>
             </ul>
           </div>
         </div>
- 
+
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 opacity-40">
-          <div className="font-body text-[10px] text-stone-light tracking-widest uppercase">
-            © 2026 PETRA — Protocol for Cultural Heritage.
+          <div className="font-body text-[10px] text-stone tracking-widest uppercase">
+            {dict.copyright}
           </div>
-          <div className="flex gap-8">
-            <a href="#" className="font-body text-[10px] text-stone-light hover:text-ivory transition-colors duration-500 uppercase tracking-widest">
-              Cookie
-            </a>
-            <a href="#" className="font-body text-[10px] text-stone-light hover:text-ivory transition-colors duration-500 uppercase tracking-widest">
-              GDPR
-            </a>
-          </div>
+          <Link
+            href={`/${lang}/privacy`}
+            className="font-body text-[10px] text-stone hover:text-ivory transition-colors duration-500 tracking-widest uppercase"
+          >
+            {dict.cookieText}
+          </Link>
         </div>
       </div>
     </footer>
