@@ -30,7 +30,7 @@ export default function Network({ dict, lang }: NetworkProps) {
                   <Link
                     key={i}
                     href={`/${lang}/per-gli-enti`}
-                    className="block p-8 md:p-12 bg-ivory hover:bg-white transition-all duration-500 group cursor-pointer"
+                    className="block p-8 md:p-12 bg-transparent hover:bg-white transition-all duration-500 group cursor-pointer"
                   >
                     <div className="w-10 h-10 md:w-14 md:h-14 border border-crimson/30 flex items-center justify-center font-display text-xl md:text-2xl text-crimson mb-6 md:mb-8 group-hover:bg-crimson group-hover:text-ivory transition-all duration-500">
                       {card.icon}
