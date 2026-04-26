@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import type { Dictionary } from "@/app/dictionaries";
 
 interface NavbarProps {
@@ -15,6 +15,7 @@ export default function Navbar({ dict, lang }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   const otherLang = lang === "it" ? "en" : "it";
   const switchedPath = pathname.replace(`/${lang}`, `/${otherLang}`);
@@ -33,12 +34,16 @@ export default function Navbar({ dict, lang }: NavbarProps) {
   }, []);
 
   const handleAnchorClick = (href: string) => {
+    if (pathname !== `/${lang}`) {
+      router.push(`/${lang}${href}`);
+      setMobileOpen(false);
+      return;
+    }
+
     const el = document.querySelector(href);
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
       setMobileOpen(false);
-    } else {
-      window.location.href = `/${lang}/${href}`;
     }
   };
 
