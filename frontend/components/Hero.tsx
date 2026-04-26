@@ -13,7 +13,7 @@ export default function Hero({ dict }: HeroProps) {
         <FadeIn>
           <div className="mb-0 flex justify-center">
             <Image
-              src="/Petra-logo.svg"
+              src="/repo-PETRA/Petra-logo.svg"
               alt="Petra"
               width={320}
               height={320}

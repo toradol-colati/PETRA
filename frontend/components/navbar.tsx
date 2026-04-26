@@ -53,7 +53,7 @@ export default function Navbar({ dict, lang }: NavbarProps) {
       >
         <Link href={`/${lang}`} className="flex items-center gap-3">
           <Image
-            src="/Petra-logo.svg"
+            src="/repo-PETRA/Petra-logo.svg"
             alt="Petra"
             width={50}
             height={50}
