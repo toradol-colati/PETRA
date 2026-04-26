@@ -10,7 +10,7 @@ export default function Footer({ dict, lang }: FooterProps) {
   return (
     <footer className="bg-carbon text-stone border-t border-crimson py-24 px-6 md:px-10">
       <div className="max-w-[1200px] mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 mb-20 pb-16 border-b border-white/5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 mb-20 pb-16 border-b border-white/5">
           {/* Brand */}
           <div>
             <div className="font-display text-2xl font-bold tracking-[0.35em] uppercase text-ivory mb-6">
@@ -21,6 +21,25 @@ export default function Footer({ dict, lang }: FooterProps) {
             </p>
           </div>
 
+          {/* Petra */}
+          <div>
+            <div className="font-body text-[10px] font-bold tracking-[0.25em] uppercase text-crimson mb-8">
+              {dict.petraLabel}
+            </div>
+            <ul className="flex flex-col gap-3.5">
+              <li>
+                <Link href={`/${lang}/problema`} className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
+                  {dict.problemLink}
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${lang}/chi-siamo`} className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
+                  {dict.aboutLink}
+                </Link>
+              </li>
+            </ul>
+          </div>
+
           {/* Sistema */}
           <div>
             <div className="font-body text-[10px] font-bold tracking-[0.25em] uppercase text-crimson mb-8">
@@ -29,9 +48,9 @@ export default function Footer({ dict, lang }: FooterProps) {
             <ul className="flex flex-col gap-3.5">
               {dict.systemLinks.map((label) => (
                 <li key={label}>
-                  <a href="#sistema" className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
+                  <Link href={`/${lang}#sistema`} className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
                     {label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
