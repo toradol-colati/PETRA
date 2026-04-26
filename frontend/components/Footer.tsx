@@ -23,9 +23,9 @@ export default function Footer({ dict, lang }: FooterProps) {
             <Image
               src="/repo-PETRA/Petra-logo.svg"
               alt="Petra"
-              width={100}
-              height={100}
-              className="w-24 h-24 object-contain opacity-30 hover:opacity-100 transition-opacity duration-500"
+              width={160}
+              height={160}
+              className="w-40 h-40 object-contain opacity-30 hover:opacity-100 transition-opacity duration-500"
             />
           </div>
 
