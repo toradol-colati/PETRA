@@ -14,13 +14,13 @@ export default function ProtocolBanner({ dict, lang }: ProtocolBannerProps) {
         <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-6 lg:gap-20">
           <div>
             <p className="font-body text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase text-stone lg:sticky lg:top-32 mb-4 lg:mb-0">
-              Protocollo
+              {dict.nav.protocol}
             </p>
           </div>
 
           <div>
             <FadeIn>
-              <h2 className="font-display text-[clamp(1.5rem,4vw,3.5rem)] font-bold text-carbon mb-6">
+              <h2 className="font-display text-[clamp(1.5rem,4vw,3.5rem)] font-bold text-carbon mb-6 tracking-tight">
                 {dict.protocolBanner.title}
               </h2>
 
@@ -33,7 +33,7 @@ export default function ProtocolBanner({ dict, lang }: ProtocolBannerProps) {
                     ⌘
                   </div>
                   <div className="font-body text-[11px] md:text-[13px] font-bold tracking-wider uppercase text-carbon mb-3 md:mb-4">
-                    {dict.protocolBanner.title}
+                    {dict.protocolBanner.cardTitle}
                   </div>
                   <div className="font-body text-[13px] md:text-sm font-light leading-relaxed text-carbon-soft/80 mb-6 md:mb-8">
                     {dict.protocolBanner.desc}

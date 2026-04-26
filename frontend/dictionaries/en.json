@@ -180,7 +180,8 @@
     "cta": "Write to us for an assessment"
   },
   "protocolBanner": {
-    "title": "Protocol",
+    "title": "Micro-mecenatism",
+    "cardTitle": "How it works",
     "desc": "Donate and verify where the funds go",
     "link": "Learn more"
   }
