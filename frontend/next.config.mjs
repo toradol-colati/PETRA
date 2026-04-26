@@ -2,6 +2,8 @@
 const nextConfig = {
   output: "export",
   distDir: "../docs",
+  basePath: "/repo-PETRA",
+  trailingSlash: true,
   images: {
     unoptimized: true,
   },
