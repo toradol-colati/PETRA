@@ -1,5 +1,6 @@
 {
   "nav": {
+    "home": "Home page",
     "protocol": "Protocollo",
     "network": "Network",
     "problem": "Il Problema",
@@ -172,6 +173,11 @@
         "desc": "Ricevete reportistica trimestrale e dati di willingness-to-pay dei turisti, utilizzabili per le vostre decisioni di policy."
       }
     ],
-    "cta": "Scriveteci per una valutazione"
+    "cta": "Scrivici per una valutazione"
+  },
+  "protocolBanner": {
+    "title": "Protocollo",
+    "desc": "Dona e verifica che fine fanno le donazioni",
+    "link": "Scopri di più"
   }
 }

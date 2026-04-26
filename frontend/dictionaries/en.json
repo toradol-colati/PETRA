@@ -1,5 +1,6 @@
 {
   "nav": {
+    "home": "Home page",
     "protocol": "Protocol",
     "network": "Network",
     "problem": "The Problem",
@@ -177,5 +178,10 @@
       }
     ],
     "cta": "Write to us for an assessment"
+  },
+  "protocolBanner": {
+    "title": "Protocol",
+    "desc": "Donate and verify where the funds go",
+    "link": "Learn more"
   }
 }

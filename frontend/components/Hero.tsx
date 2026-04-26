@@ -35,7 +35,7 @@ export default function Hero({ dict }: HeroProps) {
         </FadeIn>
       </div>
 
-      <div className="w-full bg-ivory-deep flex flex-col items-center px-6 md:px-10 py-16 md:py-32 border-t border-stone-pale/50">
+      <div id="mission" className="w-full bg-ivory-deep flex flex-col items-center px-6 md:px-10 py-16 md:py-32 border-t border-stone-pale/50">
         <FadeIn>
           <div className="w-full max-w-[1200px] h-px bg-carbon/10 mb-12 md:mb-16" />
         </FadeIn>
