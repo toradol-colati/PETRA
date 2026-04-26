@@ -27,7 +27,7 @@
     "sidebarLabel": "PROTOCOLLO",
     "blockA": {
       "title": "Come Funziona",
-      "description": "Petra semplifica la mobilitazione di micro-donazioni collegando direttamente i beni ai visitatori.",
+      "description": "Petra crea una piattaforma per il micro-mecenatismo collegando direttamente i beni ai visitatori.",
       "steps": [
         {
           "num": "01",
@@ -87,16 +87,10 @@
     "partnerTitle": "Diventa Partner",
     "partners": [
       {
-        "icon": "§",
-        "title": "Ente non-profit",
-        "desc": "Verifica la possibilità di una collaborazione con Petra.",
-        "link": "Collabora"
-      },
-      {
         "icon": "◈",
-        "title": "Attività commerciale",
-        "desc": "Allinea il tuo brand alla tutela del patrimonio culturale.",
-        "link": "Diventa partner"
+        "title": "Partner e Collaboratori",
+        "desc": "Verifica la possibilità di collaborare con Petra o allinea il tuo brand alla tutela del patrimonio culturale.",
+        "link": "Collabora o diventa partner"
       }
     ]
   },
@@ -116,8 +110,8 @@
     "copyright": "© 2026 PETRA — Protocol for Cultural Heritage."
   },
   "problem": {
-    "title": "Il Problema",
-    "intro": "Cammina per una città d'arte. Alza lo sguardo. L'architettura che definisce questi luoghi — il motivo per cui le persone attraversano il mondo — sta cadendo a pezzi. Non per incuria, ma per un difetto di sistema.",
+    "title": "Nelle Città d'Arte",
+    "intro": "Alza lo sguardo. L'architettura che definisce questi luoghi — il motivo per cui le persone attraversano il mondo — sta cadendo a pezzi. Non per incuria, ma per un difetto di sistema.",
     "diagnosisTitle": "Che succede?",
     "diagnosis": [
       "È un caso da manuale di esternalità positiva non compensata: chi beneficia non paga, chi paga non beneficia.",

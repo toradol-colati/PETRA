@@ -27,7 +27,7 @@
     "sidebarLabel": "PROTOCOL",
     "blockA": {
       "title": "How It Works",
-      "description": "Petra simplifies the mobilization of micro-donations by directly connecting heritage buildings to visitors.",
+      "description": "Petra creates a platform for micro-mecenatism by directly connecting heritage buildings to visitors.",
       "steps": [
         {
           "num": "01",
@@ -87,16 +87,10 @@
     "partnerTitle": "Become a Partner",
     "partners": [
       {
-        "icon": "§",
-        "title": "Non-profit organization",
-        "desc": "Explore the possibility of collaborating with Petra.",
-        "link": "Collaborate"
-      },
-      {
         "icon": "◈",
-        "title": "Business",
-        "desc": "Align your brand with cultural heritage preservation.",
-        "link": "Become a partner"
+        "title": "Partners & Collaborators",
+        "desc": "Explore the possibility of collaborating with Petra or align your brand with cultural heritage preservation.",
+        "link": "Collaborate or become a partner"
       }
     ]
   },
@@ -116,9 +110,9 @@
     "copyright": "© 2026 PETRA — Protocol for Cultural Heritage."
   },
   "problem": {
-    "title": "The Problem",
+    "title": "In Art Cities",
     "intro": [
-      "Walk through a city of art. Look up. The architecture that define these places — the reason millions of people cross the world — is falling apart. Not through negligence, but through a systemic failure.",
+      "Look up. The architecture that define these places — the reason millions of people cross the world — is falling apart. Not through negligence, but through a systemic failure.",
       "Over-tourism, high costs of restoration, public benefit, no mechanism to directly internalize tourists willingness-to-pay.",
       "This leads to the growing degradation of the architectural heritage that has an intrinsic very relevant historical-artistic value."
     ],
