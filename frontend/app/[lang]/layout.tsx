@@ -6,6 +6,11 @@ import Footer from "@/components/Footer";
 
 import { getDictionary } from "@/app/dictionaries";
 import type { Locale } from "@/i18n.config";
+import { i18n } from "@/i18n.config";
+
+export function generateStaticParams() {
+  return i18n.locales.map((lang) => ({ lang }));
+}
 
 const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-sans" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-serif" });
