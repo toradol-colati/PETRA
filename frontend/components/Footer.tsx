@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Dictionary } from "@/app/dictionaries";
 
 interface FooterProps {
@@ -16,9 +17,16 @@ export default function Footer({ dict, lang }: FooterProps) {
             <div className="font-display text-2xl font-bold tracking-[0.35em] uppercase text-ivory mb-6">
               P&nbsp;E&nbsp;T&nbsp;R&nbsp;A
             </div>
-            <p className="font-body text-xs font-light leading-relaxed text-stone max-w-[280px] opacity-70">
+            <p className="font-body text-xs font-light leading-relaxed text-stone max-w-[280px] opacity-70 mb-10">
               {dict.brand}
             </p>
+            <Image
+              src="/repo-PETRA/Petra-logo.svg"
+              alt="Petra"
+              width={60}
+              height={60}
+              className="w-16 h-16 object-contain opacity-30 hover:opacity-100 transition-opacity duration-500"
+            />
           </div>
 
           {/* Petra */}
