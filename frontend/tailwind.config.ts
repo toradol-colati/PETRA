@@ -10,11 +10,11 @@ const config: Config = {
       colors: {
         ivory: {
           DEFAULT: "#FBFBF9",
-          deep: "#F2F0EA",
+          deep: "#E5E0D4",
         },
         crimson: {
-          DEFAULT: "#921416",
-          dark: "#630D0E",
+          DEFAULT: "#B01E20",
+          dark: "#7A1415",
         },
         carbon: {
           soft: "#333333",

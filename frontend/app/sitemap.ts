@@ -7,10 +7,6 @@ const ROUTES = [
   "/problema",
   "/chi-siamo",
   "/per-gli-enti",
-  "/privacy",
-  "/termini",
-  "/trasparenza",
-  "/progetti/venezia",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

@@ -41,19 +41,76 @@ The content is organized as follows:
 
 <directory_structure>
 backend/
-  Bdescription
+  prisma/
+    schema.prisma
+  src/
+    lib/
+      env.ts
+      prisma.ts
+      shadowDid.ts
+    middleware/
+      apiKey.ts
+      auth.ts
+      rateLimit.ts
+      requestId.ts
+    routes/
+      batches.ts
+      donations.ts
+      projects.ts
+      webhooks.ts
+    schemas/
+      donation.ts
+    services/
+      audit.ts
+      batcher.ts
+      merkle.ts
+      xrpl.ts
+    index.ts
+  tests/
+    donation.test.ts
+    merkle.test.ts
+    shadowDid.test.ts
+  .env.example
+  Dockerfile
+  package.json
+  README.md
+  tsconfig.json
+  vitest.config.ts
 frontend/
   app/
     [lang]/
+      chi-siamo/
+        page.tsx
+      per-gli-enti/
+        page.tsx
+      privacy/
+        page.tsx
+      problema/
+        page.tsx
+      progetti/
+        [id]/
+          page.tsx
+      termini/
+        page.tsx
+      trasparenza/
+        page.tsx
+      error.tsx
       layout.tsx
+      loading.tsx
       page.tsx
     dictionaries.ts
     globals.css
+    robots.ts
+    sitemap.ts
   components/
+    Analytics.tsx
+    FadeIn.tsx
     Footer.tsx
     Hero.tsx
-    navbar.tsx
+    ImpactChart.tsx
+    Navbar.tsx
     Network.tsx
+    ServiceWorker.tsx
     System.tsx
   dictionaries/
     en.json
@@ -62,6 +119,7 @@ frontend/
     manifest.json
     og-image.png
     Petra-logo.svg
+    sw.js
   Fdescription
   i18n.config.ts
   middleware.ts
@@ -72,124 +130,3675 @@ frontend/
   tailwind.config.ts
   tsconfig.json
 .gitignore
+docker-compose.yml
 README.md
 </directory_structure>
 
 <files>
 This section contains the contents of the repository's files.
 
-<file path="frontend/app/[lang]/layout.tsx">
-import '../globals.css';
-import type { Metadata } from 'next';
-import { DM_Sans, Playfair_Display } from 'next/font/google';
+<file path="frontend/components/Navbar.tsx">
+"use client";
 
-const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-sans' });
-const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-serif' });
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import type { Dictionary } from "@/app/dictionaries";
 
-export const metadata: Metadata = {
-  metadataBase: new URL('https://petra.io'),
-  title: 'PETRA',
-  description: 'Infrastruttura digitale per la conservazione del patrimonio culturale e artistico.',
-  openGraph: {
-    title: 'PETRA',
-    description: 'Infrastruttura digitale per la conservazione del patrimonio culturale e artistico.',
-    url: 'https://petra.io',
-    siteName: 'PETRA',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1024,
-        height: 1024,
-        alt: 'PETRA - Cultural Heritage Conservation',
-      },
-    ],
-    locale: 'it_IT',
-    type: 'website',
+interface NavbarProps {
+  dict: Dictionary["nav"];
+  lang: string;
+}
+
+export default function Navbar({ dict, lang }: NavbarProps) {
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
+
+  const otherLang = lang === "it" ? "en" : "it";
+  const switchedPath = pathname.replace(`/${lang}`, `/${otherLang}`);
+
+  const navLinks = [
+    { href: "#sistema", label: dict.protocol },
+    { href: "#network", label: dict.network },
+    { href: `/${lang}/problema`, label: dict.problem },
+    { href: `/${lang}/chi-siamo`, label: dict.about },
+  ];
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 60);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const handleAnchorClick = (href: string) => {
+    const el = document.querySelector(href);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      setMobileOpen(false);
+    } else {
+      window.location.href = `/${lang}/${href}`;
+    }
+  };
+
+  return (
+    <>
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between border-b border-stone-pale backdrop-blur-xl transition-all duration-300 ${
+          scrolled
+            ? "px-6 md:px-10 py-3 bg-ivory/[0.97]"
+            : "px-6 md:px-10 py-5 bg-ivory/[0.92]"
+        }`}
+      >
+        <Link href={`/${lang}`} className="flex items-center gap-3">
+          <Image
+            src="/Petra-logo.svg"
+            alt="Petra"
+            width={50}
+            height={50}
+            className="w-12 h-12 object-contain"
+          />
+          <span className="font-display text-xl font-bold tracking-institutional uppercase text-carbon">
+            P&nbsp;E&nbsp;T&nbsp;R&nbsp;A
+          </span>
+        </Link>
+
+        <div className="hidden md:flex items-center gap-10">
+          <ul className="flex items-center gap-10">
+            {navLinks.map((link) => (
+              <li key={link.href}>
+                {link.href.startsWith("#") ? (
+                  <button
+                    onClick={() => handleAnchorClick(link.href)}
+                    className="font-body text-xs font-semibold tracking-[0.2em] uppercase text-carbon-soft hover:text-crimson transition-colors duration-300 relative group"
+                  >
+                    {link.label}
+                    <span className="absolute -bottom-1 left-0 w-0 h-px bg-crimson group-hover:w-full transition-all duration-300" />
+                  </button>
+                ) : (
+                  <Link
+                    href={link.href}
+                    className="font-body text-xs font-semibold tracking-[0.2em] uppercase text-carbon-soft hover:text-crimson transition-colors duration-300 relative group"
+                  >
+                    {link.label}
+                    <span className="absolute -bottom-1 left-0 w-0 h-px bg-crimson group-hover:w-full transition-all duration-300" />
+                  </Link>
+                )}
+              </li>
+            ))}
+          </ul>
+
+          <Link
+            href={switchedPath}
+            className="font-body text-[10px] font-bold tracking-[0.25em] uppercase text-crimson border border-crimson/30 px-4 py-2 hover:bg-crimson hover:text-ivory transition-all duration-300"
+          >
+            {dict.langSwitch}
+          </Link>
+        </div>
+
+        <button
+          className="flex md:hidden flex-col gap-[5px] p-1"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label="Menu"
+        >
+          <span
+            className={`block w-6 h-[1.5px] bg-carbon transition-all duration-300 ${
+              mobileOpen ? "rotate-45 translate-y-[6.5px]" : ""
+            }`}
+          />
+          <span
+            className={`block w-6 h-[1.5px] bg-carbon transition-all duration-300 ${
+              mobileOpen ? "opacity-0" : ""
+            }`}
+          />
+          <span
+            className={`block w-6 h-[1.5px] bg-carbon transition-all duration-300 ${
+              mobileOpen ? "-rotate-45 -translate-y-[6.5px]" : ""
+            }`}
+          />
+        </button>
+      </nav>
+
+      {mobileOpen && (
+        <div className="fixed inset-0 bg-ivory z-40 pt-24 px-6 flex flex-col gap-6">
+          {navLinks.map((link) =>
+            link.href.startsWith("#") ? (
+              <button
+                key={link.href}
+                onClick={() => handleAnchorClick(link.href)}
+                className="font-display text-3xl font-semibold text-carbon text-left pb-2 border-b border-stone-pale hover:text-crimson transition-colors duration-300"
+              >
+                {link.label}
+              </button>
+            ) : (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMobileOpen(false)}
+                className="font-display text-3xl font-semibold text-carbon text-left pb-2 border-b border-stone-pale hover:text-crimson transition-colors duration-300"
+              >
+                {link.label}
+              </Link>
+            )
+          )}
+
+          <Link
+            href={switchedPath}
+            onClick={() => setMobileOpen(false)}
+            className="font-body text-sm font-bold tracking-[0.2em] uppercase text-crimson pt-4"
+          >
+            {dict.langSwitch}
+          </Link>
+        </div>
+      )}
+    </>
+  );
+}
+</file>
+
+<file path="backend/prisma/schema.prisma">
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(uuid())
+  email     String     @unique
+  shadowDID String     @unique
+  didSalt   String     @default(uuid())
+  createdAt DateTime   @default(now())
+  donations Donation[]
+}
+
+model Donation {
+  id                    String   @id @default(uuid())
+  amount                Int      // centesimi, MAI float
+  currency              String   @default("EUR")
+  timestamp             DateTime @default(now())
+  leafHash              String
+  vcData                Json?
+  nonce                 String   @unique
+  batched               Boolean  @default(false)
+  stripePaymentIntentId String?  @unique
+  locationId            String
+  project               Project  @relation(fields: [locationId], references: [id])
+  user                  User     @relation(fields: [userId], references: [id])
+  userId                String
+  batch                 Batch?   @relation(fields: [batchId], references: [id])
+  batchId               String?
+
+  @@index([batched, timestamp])
+  @@index([locationId])
+}
+
+enum BatchStatus {
+  PENDING
+  COMMITTED
+  FAILED
+}
+
+model Batch {
+  id          String      @id @default(uuid())
+  rootHash    String      @unique
+  xrplTxHash  String?     @unique
+  status      BatchStatus @default(PENDING)
+  leafCount   Int         @default(0)
+  totalAmount Int         @default(0)
+  createdAt   DateTime    @default(now())
+  donations   Donation[]
+}
+
+enum ProjectStatus {
+  VALIDATING
+  ACTIVE
+  COMPLETED
+}
+
+model Project {
+  id               String        @id @default(uuid())
+  title            String
+  city             String
+  shortDescription String
+  status           ProjectStatus @default(VALIDATING)
+  stripeAccountId  String?
+  donations        Donation[]
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  action    String
+  entity    String
+  entityId  String?
+  data      Json?
+  requestId String?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([entity, entityId])
+  @@index([createdAt])
+}
+</file>
+
+<file path="backend/src/lib/env.ts">
+import { z } from "zod";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const envSchema = z.object({
+  DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
+  STRIPE_SECRET_KEY: z.string().min(1, "STRIPE_SECRET_KEY is required"),
+  STRIPE_WEBHOOK_SECRET: z.string().min(1, "STRIPE_WEBHOOK_SECRET is required"),
+  XRPL_MASTER_SEED: z.string().min(1, "XRPL_MASTER_SEED is required"),
+  SHADOW_DID_SECRET: z.string().min(32, "SHADOW_DID_SECRET must be at least 32 chars"),
+  SESSION_SECRET: z.string().min(32, "SESSION_SECRET must be at least 32 chars"),
+  API_KEY: z.string().min(16, "API_KEY must be at least 16 chars"),
+  PORT: z.coerce.number().default(4000),
+  NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
+  LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace"]).default("info"),
+  XRPL_NETWORK: z.enum(["testnet", "mainnet", "devnet"]).default("testnet"),
+});
+
+export type Env = z.infer<typeof envSchema>;
+
+function validateEnv(): Env {
+  const result = envSchema.safeParse(process.env);
+
+  if (!result.success) {
+    console.error("❌ Invalid environment variables:");
+    const errors = result.error.flatten().fieldErrors;
+    for (const [key, msgs] of Object.entries(errors)) {
+      console.error(`  ${key}: ${msgs?.join(", ")}`);
+    }
+    process.exit(1);
+  }
+
+  return result.data;
+}
+
+export const env = validateEnv();
+</file>
+
+<file path="backend/src/lib/prisma.ts">
+import { PrismaClient } from "@prisma/client";
+
+const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
+
+export const prisma = globalForPrisma.prisma || new PrismaClient();
+
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+</file>
+
+<file path="backend/src/lib/shadowDid.ts">
+import { createHmac, randomBytes } from "crypto";
+
+export function computeShadowDID(
+  email: string,
+  perUserSalt: string,
+  secret: string
+): string {
+  const normalizedEmail = email.toLowerCase().trim();
+  const hmac = createHmac("sha256", secret);
+  hmac.update(`${normalizedEmail}:${perUserSalt}`);
+  return hmac.digest("hex");
+}
+
+export function generateDidSalt(): string {
+  return randomBytes(16).toString("hex");
+}
+</file>
+
+<file path="backend/src/middleware/apiKey.ts">
+import type { Request, Response, NextFunction } from "express";
+import { env } from "../lib/env";
+
+export function apiKeyMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
+  const apiKey = req.headers["x-api-key"];
+
+  if (apiKey !== env.API_KEY) {
+    res.status(401).json({ error: "Invalid or missing API key" });
+    return;
+  }
+
+  next();
+}
+</file>
+
+<file path="backend/src/middleware/auth.ts">
+import type { Request, Response, NextFunction } from "express";
+import { getIronSession } from "iron-session";
+
+interface SessionData {
+  userId?: string;
+}
+
+const SESSION_OPTIONS = {
+  cookieName: "petra_session",
+  password: process.env.SESSION_SECRET || "a]3hd8f2kd9s0f3j5k6l7m8n9o0p1q2r3s4t5u6v7",
+  cookieOptions: {
+    secure: process.env.NODE_ENV === "production",
+    httpOnly: true,
+    sameSite: "lax" as const,
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'PETRA',
-    description: 'Infrastruttura digitale per la conservazione del patrimonio culturale.',
-    images: ['/og-image.png'],
-  },
-  icons: {
-    icon: '/Petra-logo.svg',
-    shortcut: '/Petra-logo.svg',
-    apple: '/Petra-logo.svg',
-  },
-  manifest: '/manifest.json',
 };
 
-export default function RootLayout({
+export async function authMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  const session = await getIronSession<SessionData>(req, res, SESSION_OPTIONS);
+
+  if (!session.userId) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+
+  (req as Request & { userId: string }).userId = session.userId;
+  next();
+}
+
+export { SESSION_OPTIONS };
+export type { SessionData };
+</file>
+
+<file path="backend/src/middleware/rateLimit.ts">
+import rateLimit from "express-rate-limit";
+
+export const publicRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many requests, please try again later" },
+});
+
+export const webhookRateLimit = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 50,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many webhook requests" },
+});
+
+export const strictRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Rate limit exceeded" },
+});
+</file>
+
+<file path="backend/src/middleware/requestId.ts">
+import { randomUUID } from "crypto";
+import type { Request, Response, NextFunction } from "express";
+
+export function requestIdMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
+  const requestId = randomUUID();
+  (req as Request & { requestId: string }).requestId = requestId;
+  res.setHeader("X-Request-ID", requestId);
+  next();
+}
+</file>
+
+<file path="backend/src/routes/batches.ts">
+import { Router } from "express";
+import { prisma } from "../lib/prisma";
+
+const router = Router();
+
+// GET /api/batches — List all batches (transparency dashboard)
+router.get("/", async (_req, res) => {
+  const batches = await prisma.batch.findMany({
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      rootHash: true,
+      xrplTxHash: true,
+      status: true,
+      leafCount: true,
+      totalAmount: true,
+      createdAt: true,
+    },
+  });
+
+  res.json(batches);
+});
+
+// GET /api/batches/:id — Batch detail with donations
+router.get("/:id", async (req, res) => {
+  const batch = await prisma.batch.findUnique({
+    where: { id: req.params.id },
+    include: {
+      donations: {
+        select: {
+          id: true,
+          amount: true,
+          leafHash: true,
+          timestamp: true,
+        },
+      },
+    },
+  });
+
+  if (!batch) {
+    res.status(404).json({ error: "Batch not found" });
+    return;
+  }
+
+  res.json(batch);
+});
+
+export default router;
+</file>
+
+<file path="backend/src/routes/donations.ts">
+import { Router } from "express";
+import Stripe from "stripe";
+import { prisma } from "../lib/prisma";
+import { createDonationSchema } from "../schemas/donation";
+import { generateMerkleProof, verifyMerkleProof } from "../services/merkle";
+import { audit } from "../services/audit";
+import { env } from "../lib/env";
+import { getExplorerUrl } from "../services/xrpl";
+
+const router = Router();
+
+// POST /api/donations — Create Stripe PaymentIntent (pre-donation)
+router.post("/", async (req, res) => {
+  const parsed = createDonationSchema.safeParse(req.body);
+
+  if (!parsed.success) {
+    res.status(400).json({
+      error: "Validation failed",
+      details: parsed.error.flatten().fieldErrors,
+    });
+    return;
+  }
+
+  const { amount, currency, locationId, email } = parsed.data;
+
+  const project = await prisma.project.findUnique({
+    where: { id: locationId },
+  });
+
+  if (!project) {
+    res.status(404).json({ error: "Project not found" });
+    return;
+  }
+
+  if (project.status !== "ACTIVE") {
+    res
+      .status(422)
+      .json({ error: "Project is not currently accepting donations" });
+    return;
+  }
+
+  const stripe = new Stripe(env.STRIPE_SECRET_KEY);
+
+  const params: Stripe.PaymentIntentCreateParams = {
+    amount,
+    currency: currency.toLowerCase(),
+    metadata: { email, locationId },
+  };
+
+  if (project.stripeAccountId) {
+    params.transfer_data = { destination: project.stripeAccountId };
+  }
+
+  const paymentIntent = await stripe.paymentIntents.create(params);
+
+  await audit({
+    action: "PAYMENT_INTENT_CREATED",
+    entity: "PaymentIntent",
+    entityId: paymentIntent.id,
+    data: { amount, locationId },
+    requestId: (req as any).requestId,
+    ip: req.ip,
+  });
+
+  res.status(201).json({
+    clientSecret: paymentIntent.client_secret,
+    paymentIntentId: paymentIntent.id,
+  });
+});
+
+// GET /api/donations/:id
+router.get("/:id", async (req, res) => {
+  const donation = await prisma.donation.findUnique({
+    where: { id: req.params.id },
+    select: {
+      id: true,
+      amount: true,
+      currency: true,
+      timestamp: true,
+      leafHash: true,
+      batched: true,
+      batch: {
+        select: {
+          id: true,
+          rootHash: true,
+          xrplTxHash: true,
+          status: true,
+          leafCount: true,
+        },
+      },
+    },
+  });
+
+  if (!donation) {
+    res.status(404).json({ error: "Donation not found" });
+    return;
+  }
+
+  res.json(donation);
+});
+
+// GET /api/donations/:id/verify — End-to-end cryptographic verification
+router.get("/:id/verify", async (req, res) => {
+  const donation = await prisma.donation.findUnique({
+    where: { id: req.params.id },
+    include: {
+      batch: {
+        include: {
+          donations: { select: { leafHash: true } },
+        },
+      },
+    },
+  });
+
+  if (!donation) {
+    res.status(404).json({ error: "Donation not found" });
+    return;
+  }
+
+  if (!donation.batch) {
+    res.json({
+      verified: false,
+      reason: "Donation not yet included in a batch",
+      donation: {
+        id: donation.id,
+        leafHash: donation.leafHash,
+        amount: donation.amount,
+      },
+    });
+    return;
+  }
+
+  const leaves = donation.batch.donations.map((d) => d.leafHash);
+  const proofResult = generateMerkleProof(leaves, donation.leafHash);
+
+  if (!proofResult) {
+    res.json({ verified: false, reason: "Leaf not found in batch tree" });
+    return;
+  }
+
+  const verified = verifyMerkleProof(
+    donation.leafHash,
+    proofResult.proof,
+    donation.batch.rootHash
+  );
+
+  res.json({
+    verified,
+    donation: {
+      id: donation.id,
+      leafHash: donation.leafHash,
+      amount: donation.amount,
+      timestamp: donation.timestamp,
+    },
+    batch: {
+      id: donation.batch.id,
+      rootHash: donation.batch.rootHash,
+      xrplTxHash: donation.batch.xrplTxHash,
+      status: donation.batch.status,
+    },
+    proof: proofResult.proof,
+    xrplExplorerUrl: donation.batch.xrplTxHash
+      ? getExplorerUrl(donation.batch.xrplTxHash)
+      : null,
+  });
+});
+
+export default router;
+</file>
+
+<file path="backend/src/routes/projects.ts">
+import { Router } from "express";
+import Stripe from "stripe";
+import { prisma } from "../lib/prisma";
+import { apiKeyMiddleware } from "../middleware/apiKey";
+import { audit } from "../services/audit";
+import { env } from "../lib/env";
+
+const router = Router();
+
+// GET /api/projects — List all projects (public)
+router.get("/", async (_req, res) => {
+  const projects = await prisma.project.findMany({
+    include: { _count: { select: { donations: true } } },
+  });
+
+  const result = await Promise.all(
+    projects.map(async (p) => {
+      const agg = await prisma.donation.aggregate({
+        where: { locationId: p.id },
+        _sum: { amount: true },
+      });
+      return {
+        id: p.id,
+        title: p.title,
+        city: p.city,
+        shortDescription: p.shortDescription,
+        status: p.status,
+        donationCount: p._count.donations,
+        totalDonatedCents: agg._sum.amount ?? 0,
+      };
+    })
+  );
+
+  res.json(result);
+});
+
+// GET /api/projects/:id — Project detail (public)
+router.get("/:id", async (req, res) => {
+  const project = await prisma.project.findUnique({
+    where: { id: req.params.id },
+    include: { _count: { select: { donations: true } } },
+  });
+
+  if (!project) {
+    res.status(404).json({ error: "Project not found" });
+    return;
+  }
+
+  const agg = await prisma.donation.aggregate({
+    where: { locationId: project.id },
+    _sum: { amount: true },
+  });
+
+  res.json({
+    id: project.id,
+    title: project.title,
+    city: project.city,
+    shortDescription: project.shortDescription,
+    status: project.status,
+    donationCount: project._count.donations,
+    totalDonatedCents: agg._sum.amount ?? 0,
+    hasStripeConnect: !!project.stripeAccountId,
+  });
+});
+
+// POST /api/projects/:id/connect — Start Stripe Connect onboarding (protected)
+router.post("/:id/connect", apiKeyMiddleware, async (req, res) => {
+  const project = await prisma.project.findUnique({
+    where: { id: req.params.id },
+  });
+
+  if (!project) {
+    res.status(404).json({ error: "Project not found" });
+    return;
+  }
+
+  const stripe = new Stripe(env.STRIPE_SECRET_KEY);
+
+  const account = await stripe.accounts.create({
+    type: "express",
+    country: "IT",
+    business_type: "non_profit",
+    metadata: { projectId: project.id },
+  });
+
+  await prisma.project.update({
+    where: { id: project.id },
+    data: { stripeAccountId: account.id },
+  });
+
+  const accountLink = await stripe.accountLinks.create({
+    account: account.id,
+    refresh_url: `https://petra.io/api/projects/${project.id}/connect/refresh`,
+    return_url: `https://petra.io/api/projects/${project.id}/connect/complete`,
+    type: "account_onboarding",
+  });
+
+  await audit({
+    action: "STRIPE_CONNECT_STARTED",
+    entity: "Project",
+    entityId: project.id,
+    data: { stripeAccountId: account.id },
+    requestId: (req as any).requestId,
+  });
+
+  res.json({ url: accountLink.url });
+});
+
+export default router;
+</file>
+
+<file path="backend/src/routes/webhooks.ts">
+import { Router } from "express";
+import Stripe from "stripe";
+import { randomUUID } from "crypto";
+import pino from "pino";
+import { prisma } from "../lib/prisma";
+import { computeLeafHash } from "../services/merkle";
+import { computeShadowDID, generateDidSalt } from "../lib/shadowDid";
+import { audit } from "../services/audit";
+import { env } from "../lib/env";
+
+const logger = pino({ level: env.LOG_LEVEL });
+const router = Router();
+
+router.post("/stripe", async (req, res) => {
+  const stripe = new Stripe(env.STRIPE_SECRET_KEY);
+  const sig = req.headers["stripe-signature"] as string;
+
+  let event: Stripe.Event;
+
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      sig,
+      env.STRIPE_WEBHOOK_SECRET
+    );
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    logger.warn({ error: message }, "Webhook signature verification failed");
+    res.status(400).json({ error: `Webhook Error: ${message}` });
+    return;
+  }
+
+  const reqId = (req as Request & { requestId?: string }).requestId;
+
+  switch (event.type) {
+    case "payment_intent.succeeded": {
+      const pi = event.data.object as Stripe.PaymentIntent;
+      const { email, locationId } = pi.metadata;
+
+      if (!email || !locationId) {
+        logger.error(
+          { paymentIntentId: pi.id },
+          "Missing metadata on PaymentIntent"
+        );
+        break;
+      }
+
+      try {
+        // Find or create user with HMAC shadow DID
+        const didSalt = generateDidSalt();
+        const shadowDID = computeShadowDID(email, didSalt, env.SHADOW_DID_SECRET);
+
+        let user = await prisma.user.findUnique({ where: { email } });
+        if (!user) {
+          user = await prisma.user.create({
+            data: { email, shadowDID, didSalt },
+          });
+        }
+
+        // Create donation with leafHash
+        const nonce = randomUUID();
+        const donationId = randomUUID();
+        const timestamp = new Date();
+
+        const leafHash = computeLeafHash(
+          donationId,
+          pi.amount,
+          nonce,
+          timestamp.toISOString()
+        );
+
+        await prisma.donation.create({
+          data: {
+            id: donationId,
+            amount: pi.amount,
+            currency: pi.currency.toUpperCase(),
+            timestamp,
+            leafHash,
+            nonce,
+            locationId,
+            userId: user.id,
+            stripePaymentIntentId: pi.id,
+          },
+        });
+
+        await audit({
+          action: "DONATION_CREATED",
+          entity: "Donation",
+          entityId: donationId,
+          data: {
+            amount: pi.amount,
+            locationId,
+            stripePaymentIntentId: pi.id,
+          },
+          requestId: reqId,
+          ip: req.ip,
+        });
+
+        logger.info(
+          { donationId, paymentIntentId: pi.id, amount: pi.amount },
+          "Donation created from webhook"
+        );
+      } catch (err) {
+        logger.error(
+          { error: err, paymentIntentId: pi.id },
+          "Failed to create donation from webhook"
+        );
+      }
+      break;
+    }
+
+    case "payment_intent.payment_failed": {
+      const pi = event.data.object as Stripe.PaymentIntent;
+      logger.warn({ paymentIntentId: pi.id }, "Payment failed");
+      await audit({
+        action: "PAYMENT_FAILED",
+        entity: "PaymentIntent",
+        entityId: pi.id,
+        requestId: reqId,
+      });
+      break;
+    }
+
+    default:
+      logger.info({ type: event.type }, "Unhandled webhook event type");
+  }
+
+  res.json({ received: true });
+});
+
+export default router;
+</file>
+
+<file path="backend/src/schemas/donation.ts">
+import { z } from "zod";
+
+export const createDonationSchema = z.object({
+  amount: z
+    .number()
+    .int("Amount must be an integer (centesimi)")
+    .min(350, "Minimum donation is 350 centesimi (€3.50)")
+    .max(100000, "Maximum donation is 100000 centesimi (€1000)"),
+  currency: z.enum(["EUR"]).default("EUR"),
+  locationId: z.string().uuid("Invalid project ID"),
+  email: z.string().email("Invalid email address"),
+});
+
+export type CreateDonationInput = z.infer<typeof createDonationSchema>;
+</file>
+
+<file path="backend/src/services/audit.ts">
+import { prisma } from "../lib/prisma";
+import pino from "pino";
+
+const logger = pino({ level: process.env.LOG_LEVEL || "info" });
+
+interface AuditEntry {
+  action: string;
+  entity: string;
+  entityId?: string;
+  data?: Record<string, unknown>;
+  requestId?: string;
+  ip?: string;
+}
+
+export async function audit(entry: AuditEntry): Promise<void> {
+  try {
+    await prisma.auditLog.create({ data: entry });
+    logger.info({ audit: entry }, "Audit entry recorded");
+  } catch (err) {
+    logger.error({ error: err, audit: entry }, "Failed to record audit entry");
+  }
+}
+</file>
+
+<file path="backend/src/services/batcher.ts">
+import { prisma } from "../lib/prisma";
+import { merkleRoot } from "./merkle";
+import { anchorBatch } from "./xrpl";
+import { audit } from "./audit";
+import pino from "pino";
+
+const logger = pino({ level: process.env.LOG_LEVEL || "info" });
+
+export async function batchPendingDonations(): Promise<string | null> {
+  const result = await prisma.$transaction(async (tx) => {
+    // FOR UPDATE SKIP LOCKED prevents race conditions:
+    // concurrent invocations skip already-locked rows
+    const unbatched = await tx.$queryRaw<
+      Array<{ id: string; leafHash: string; amount: number }>
+    >`
+      SELECT id, "leafHash", amount
+      FROM "Donation"
+      WHERE batched = false
+      ORDER BY timestamp ASC
+      FOR UPDATE SKIP LOCKED
+    `;
+
+    if (!Array.isArray(unbatched) || unbatched.length === 0) {
+      logger.info("No unbatched donations found");
+      return null;
+    }
+
+    const leaves = unbatched.map((d) => d.leafHash);
+    const root = merkleRoot(leaves);
+    const totalAmount = unbatched.reduce((sum, d) => sum + Number(d.amount), 0);
+
+    const batch = await tx.batch.create({
+      data: {
+        rootHash: root,
+        status: "PENDING",
+        leafCount: unbatched.length,
+        totalAmount,
+      },
+    });
+
+    await tx.donation.updateMany({
+      where: { id: { in: unbatched.map((d) => d.id) } },
+      data: { batched: true, batchId: batch.id },
+    });
+
+    return batch;
+  });
+
+  if (!result) return null;
+
+  logger.info(
+    {
+      batchId: result.id,
+      rootHash: result.rootHash,
+      leafCount: result.leafCount,
+    },
+    "Batch created"
+  );
+
+  await audit({
+    action: "BATCH_CREATED",
+    entity: "Batch",
+    entityId: result.id,
+    data: {
+      rootHash: result.rootHash,
+      leafCount: result.leafCount,
+      totalAmount: result.totalAmount,
+    },
+  });
+
+  // Anchor on XRPL
+  try {
+    const { txHash } = await anchorBatch(result.rootHash);
+    await markBatchCommitted(result.id, txHash);
+    return result.id;
+  } catch (err) {
+    logger.error(
+      { error: err, batchId: result.id },
+      "Failed to anchor batch on XRPL"
+    );
+
+    await prisma.batch.update({
+      where: { id: result.id },
+      data: { status: "FAILED" },
+    });
+
+    await audit({
+      action: "BATCH_ANCHOR_FAILED",
+      entity: "Batch",
+      entityId: result.id,
+      data: { error: err instanceof Error ? err.message : String(err) },
+    });
+
+    return null;
+  }
+}
+
+export async function markBatchCommitted(
+  batchId: string,
+  xrplTxHash: string
+): Promise<void> {
+  await prisma.batch.update({
+    where: { id: batchId },
+    data: { status: "COMMITTED", xrplTxHash },
+  });
+
+  logger.info({ batchId, xrplTxHash }, "Batch committed to XRPL");
+
+  await audit({
+    action: "BATCH_COMMITTED",
+    entity: "Batch",
+    entityId: batchId,
+    data: { xrplTxHash },
+  });
+}
+</file>
+
+<file path="backend/src/services/merkle.ts">
+import { createHash } from "crypto";
+
+export function sha256(data: string): string {
+  return createHash("sha256").update(data).digest("hex");
+}
+
+export function computeLeafHash(
+  donationId: string,
+  amount: number,
+  nonce: string,
+  timestamp: string
+): string {
+  const payload = `${donationId}:${amount}:${nonce}:${timestamp}`;
+  return sha256(payload);
+}
+
+export function merkleRoot(leaves: string[]): string {
+  if (leaves.length === 0) {
+    throw new Error("Cannot compute Merkle root of empty leaf set");
+  }
+  if (leaves.length === 1) {
+    return leaves[0];
+  }
+
+  const sortedLeaves = [...leaves].sort();
+  return buildTree(sortedLeaves);
+}
+
+function buildTree(nodes: string[]): string {
+  if (nodes.length === 1) {
+    return nodes[0];
+  }
+
+  const nextLevel: string[] = [];
+
+  for (let i = 0; i < nodes.length; i += 2) {
+    const left = nodes[i];
+    const right = i + 1 < nodes.length ? nodes[i + 1] : left;
+
+    const combined = left < right ? left + right : right + left;
+    nextLevel.push(sha256(combined));
+  }
+
+  return buildTree(nextLevel);
+}
+
+export function generateMerkleProof(
+  leaves: string[],
+  targetLeaf: string
+): { proof: string[]; index: number } | null {
+  const sortedLeaves = [...leaves].sort();
+  const index = sortedLeaves.indexOf(targetLeaf);
+
+  if (index === -1) return null;
+
+  const proof: string[] = [];
+  let currentLevel = sortedLeaves;
+  let currentIndex = index;
+
+  while (currentLevel.length > 1) {
+    const nextLevel: string[] = [];
+
+    for (let i = 0; i < currentLevel.length; i += 2) {
+      const left = currentLevel[i];
+      const right = i + 1 < currentLevel.length ? currentLevel[i + 1] : left;
+
+      if (i === currentIndex || i + 1 === currentIndex) {
+        const sibling = i === currentIndex ? right : left;
+        proof.push(sibling);
+      }
+
+      const combined = left < right ? left + right : right + left;
+      nextLevel.push(sha256(combined));
+    }
+
+    currentIndex = Math.floor(currentIndex / 2);
+    currentLevel = nextLevel;
+  }
+
+  return { proof, index };
+}
+
+export function verifyMerkleProof(
+  leaf: string,
+  proof: string[],
+  root: string
+): boolean {
+  let current = leaf;
+
+  for (const sibling of proof) {
+    const combined =
+      current < sibling ? current + sibling : sibling + current;
+    current = sha256(combined);
+  }
+
+  return current === root;
+}
+</file>
+
+<file path="backend/src/services/xrpl.ts">
+import { Client, Wallet, convertStringToHex } from "xrpl";
+import type { Payment } from "xrpl";
+import pino from "pino";
+import { env } from "../lib/env";
+
+const logger = pino({ level: env.LOG_LEVEL });
+
+const XRPL_SERVERS: Record<string, string> = {
+  testnet: "wss://s.altnet.rippletest.net:51233",
+  devnet: "wss://s.devnet.rippletest.net:51233",
+  mainnet: "wss://xrplcluster.com",
+};
+
+export async function anchorBatch(
+  rootHash: string
+): Promise<{ txHash: string }> {
+  const server = XRPL_SERVERS[env.XRPL_NETWORK];
+  const client = new Client(server);
+
+  try {
+    await client.connect();
+    logger.info({ network: env.XRPL_NETWORK }, "Connected to XRPL");
+
+    const wallet = Wallet.fromSeed(env.XRPL_MASTER_SEED);
+
+    const payment: Payment = {
+      TransactionType: "Payment",
+      Account: wallet.address,
+      Destination: wallet.address,
+      Amount: "1",
+      Memos: [
+        {
+          Memo: {
+            MemoType: convertStringToHex("petra/merkle-root"),
+            MemoData: convertStringToHex(rootHash),
+          },
+        },
+      ],
+    };
+
+    const prepared = await client.autofill(payment);
+    const signed = wallet.sign(prepared);
+    const result = await client.submitAndWait(signed.tx_blob);
+
+    const meta = result.result.meta;
+    if (
+      typeof meta !== "string" &&
+      meta?.TransactionResult !== "tesSUCCESS"
+    ) {
+      throw new Error(
+        `XRPL transaction failed: ${meta?.TransactionResult}`
+      );
+    }
+
+    const txHash = result.result.hash;
+    logger.info({ txHash, rootHash }, "Merkle root anchored on XRPL");
+
+    return { txHash };
+  } finally {
+    await client.disconnect();
+  }
+}
+
+export function getExplorerUrl(txHash: string): string {
+  const prefix =
+    env.XRPL_NETWORK === "mainnet" ? "" : `${env.XRPL_NETWORK}.`;
+  return `https://${prefix}xrpl.org/transactions/${txHash}`;
+}
+</file>
+
+<file path="backend/src/index.ts">
+import express from "express";
+import cors from "cors";
+import helmet from "helmet";
+import pino from "pino";
+import { env } from "./lib/env";
+import { prisma } from "./lib/prisma";
+import { requestIdMiddleware } from "./middleware/requestId";
+import { publicRateLimit, webhookRateLimit } from "./middleware/rateLimit";
+import donationRoutes from "./routes/donations";
+import projectRoutes from "./routes/projects";
+import batchRoutes from "./routes/batches";
+import webhookRoutes from "./routes/webhooks";
+
+const logger = pino({ level: env.LOG_LEVEL });
+const app = express();
+
+// Global middleware
+app.use(cors());
+app.use(helmet());
+app.use(requestIdMiddleware);
+
+// Webhook route MUST use express.raw before express.json
+app.use(
+  "/api/webhooks",
+  webhookRateLimit,
+  express.raw({ type: "application/json" }),
+  webhookRoutes
+);
+
+// JSON parsing for all other routes
+app.use(express.json());
+
+// Health check with DB connectivity
+app.get("/health", async (_req, res) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    res.json({
+      status: "ok",
+      uptime: process.uptime(),
+      timestamp: new Date().toISOString(),
+      version: process.env.npm_package_version || "1.0.0",
+      db: "connected",
+      xrpl_network: env.XRPL_NETWORK,
+    });
+  } catch {
+    res.status(503).json({
+      status: "degraded",
+      db: "disconnected",
+      timestamp: new Date().toISOString(),
+    });
+  }
+});
+
+// Public routes (rate limited)
+app.use("/api/donations", publicRateLimit, donationRoutes);
+app.use("/api/projects", publicRateLimit, projectRoutes);
+app.use("/api/batches", publicRateLimit, batchRoutes);
+
+app.listen(env.PORT, () => {
+  logger.info(
+    { port: env.PORT, env: env.NODE_ENV, xrpl: env.XRPL_NETWORK },
+    "Petra backend started"
+  );
+});
+</file>
+
+<file path="backend/tests/donation.test.ts">
+import { describe, it, expect } from "vitest";
+import { createDonationSchema } from "../src/schemas/donation";
+
+describe("createDonationSchema", () => {
+  const validInput = {
+    amount: 500,
+    currency: "EUR",
+    locationId: "550e8400-e29b-41d4-a716-446655440000",
+    email: "test@example.com",
+  };
+
+  it("accepts valid input", () => {
+    const result = createDonationSchema.safeParse(validInput);
+    expect(result.success).toBe(true);
+  });
+
+  it("defaults currency to EUR when not provided", () => {
+    const { currency, ...withoutCurrency } = validInput;
+    const result = createDonationSchema.safeParse(withoutCurrency);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.currency).toBe("EUR");
+    }
+  });
+
+  it("rejects amount below minimum (350 centesimi = €3.50)", () => {
+    const result = createDonationSchema.safeParse({ ...validInput, amount: 349 });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects amount above maximum (100000 centesimi = €1000)", () => {
+    const result = createDonationSchema.safeParse({ ...validInput, amount: 100001 });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects non-integer amounts (float centesimi)", () => {
+    const result = createDonationSchema.safeParse({ ...validInput, amount: 500.5 });
+    expect(result.success).toBe(false);
+  });
+
+  it("accepts minimum amount (350)", () => {
+    const result = createDonationSchema.safeParse({ ...validInput, amount: 350 });
+    expect(result.success).toBe(true);
+  });
+
+  it("accepts maximum amount (100000)", () => {
+    const result = createDonationSchema.safeParse({ ...validInput, amount: 100000 });
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects invalid email", () => {
+    const result = createDonationSchema.safeParse({ ...validInput, email: "not-email" });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects invalid locationId (not UUID)", () => {
+    const result = createDonationSchema.safeParse({ ...validInput, locationId: "not-uuid" });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects missing required fields", () => {
+    const result = createDonationSchema.safeParse({});
+    expect(result.success).toBe(false);
+  });
+});
+</file>
+
+<file path="backend/tests/merkle.test.ts">
+import { describe, it, expect } from "vitest";
+import {
+  sha256,
+  computeLeafHash,
+  merkleRoot,
+  generateMerkleProof,
+  verifyMerkleProof,
+} from "../src/services/merkle";
+
+describe("sha256", () => {
+  it("produces consistent output for the same input", () => {
+    const hash1 = sha256("hello");
+    const hash2 = sha256("hello");
+    expect(hash1).toBe(hash2);
+  });
+
+  it("produces different output for different inputs", () => {
+    const hash1 = sha256("hello");
+    const hash2 = sha256("world");
+    expect(hash1).not.toBe(hash2);
+  });
+
+  it("produces a 64-character hex string", () => {
+    const hash = sha256("test");
+    expect(hash).toHaveLength(64);
+    expect(hash).toMatch(/^[0-9a-f]{64}$/);
+  });
+});
+
+describe("computeLeafHash", () => {
+  it("is deterministic for the same inputs", () => {
+    const h1 = computeLeafHash("id-1", 500, "nonce-1", "2026-01-01T00:00:00.000Z");
+    const h2 = computeLeafHash("id-1", 500, "nonce-1", "2026-01-01T00:00:00.000Z");
+    expect(h1).toBe(h2);
+  });
+
+  it("changes when amount changes (integer centesimi)", () => {
+    const h1 = computeLeafHash("id-1", 500, "nonce-1", "2026-01-01T00:00:00.000Z");
+    const h2 = computeLeafHash("id-1", 501, "nonce-1", "2026-01-01T00:00:00.000Z");
+    expect(h1).not.toBe(h2);
+  });
+
+  it("changes when nonce changes", () => {
+    const h1 = computeLeafHash("id-1", 500, "nonce-1", "2026-01-01T00:00:00.000Z");
+    const h2 = computeLeafHash("id-1", 500, "nonce-2", "2026-01-01T00:00:00.000Z");
+    expect(h1).not.toBe(h2);
+  });
+});
+
+describe("merkleRoot", () => {
+  it("throws on empty leaves", () => {
+    expect(() => merkleRoot([])).toThrow("Cannot compute Merkle root of empty leaf set");
+  });
+
+  it("returns the leaf itself for a single leaf", () => {
+    const leaf = sha256("single");
+    expect(merkleRoot([leaf])).toBe(leaf);
+  });
+
+  it("is deterministic regardless of input order", () => {
+    const leaves = [sha256("a"), sha256("b"), sha256("c")];
+    const reversed = [...leaves].reverse();
+    expect(merkleRoot(leaves)).toBe(merkleRoot(reversed));
+  });
+
+  it("produces different roots for different leaf sets", () => {
+    const root1 = merkleRoot([sha256("a"), sha256("b")]);
+    const root2 = merkleRoot([sha256("a"), sha256("c")]);
+    expect(root1).not.toBe(root2);
+  });
+
+  it("handles even number of leaves", () => {
+    const leaves = [sha256("a"), sha256("b"), sha256("c"), sha256("d")];
+    const root = merkleRoot(leaves);
+    expect(root).toHaveLength(64);
+  });
+
+  it("handles odd number of leaves", () => {
+    const leaves = [sha256("a"), sha256("b"), sha256("c")];
+    const root = merkleRoot(leaves);
+    expect(root).toHaveLength(64);
+  });
+
+  it("handles large number of leaves", () => {
+    const leaves = Array.from({ length: 100 }, (_, i) => sha256(`leaf-${i}`));
+    const root = merkleRoot(leaves);
+    expect(root).toHaveLength(64);
+
+    const root2 = merkleRoot(leaves);
+    expect(root).toBe(root2);
+  });
+});
+
+describe("merkle proof generation and verification", () => {
+  it("generates and verifies a valid proof for 2 leaves", () => {
+    const leaves = [sha256("a"), sha256("b")];
+    const root = merkleRoot(leaves);
+    const result = generateMerkleProof(leaves, leaves[0]);
+
+    expect(result).not.toBeNull();
+    expect(verifyMerkleProof(leaves[0], result!.proof, root)).toBe(true);
+  });
+
+  it("generates and verifies a valid proof for 4 leaves", () => {
+    const leaves = [sha256("a"), sha256("b"), sha256("c"), sha256("d")];
+    const root = merkleRoot(leaves);
+
+    for (const leaf of leaves) {
+      const result = generateMerkleProof(leaves, leaf);
+      expect(result).not.toBeNull();
+      expect(verifyMerkleProof(leaf, result!.proof, root)).toBe(true);
+    }
+  });
+
+  it("generates and verifies a valid proof for 7 leaves", () => {
+    const leaves = Array.from({ length: 7 }, (_, i) => sha256(`leaf-${i}`));
+    const root = merkleRoot(leaves);
+
+    for (const leaf of leaves) {
+      const result = generateMerkleProof(leaves, leaf);
+      expect(result).not.toBeNull();
+      expect(verifyMerkleProof(leaf, result!.proof, root)).toBe(true);
+    }
+  });
+
+  it("returns null for a leaf not in the set", () => {
+    const leaves = [sha256("a"), sha256("b")];
+    const result = generateMerkleProof(leaves, sha256("c"));
+    expect(result).toBeNull();
+  });
+
+  it("fails verification with wrong root", () => {
+    const leaves = [sha256("a"), sha256("b")];
+    const result = generateMerkleProof(leaves, leaves[0]);
+    const fakeRoot = sha256("fake");
+
+    expect(result).not.toBeNull();
+    expect(verifyMerkleProof(leaves[0], result!.proof, fakeRoot)).toBe(false);
+  });
+
+  it("fails verification with tampered leaf", () => {
+    const leaves = [sha256("a"), sha256("b"), sha256("c")];
+    const root = merkleRoot(leaves);
+    const result = generateMerkleProof(leaves, leaves[0]);
+
+    expect(result).not.toBeNull();
+    expect(verifyMerkleProof(sha256("tampered"), result!.proof, root)).toBe(false);
+  });
+});
+</file>
+
+<file path="backend/tests/shadowDid.test.ts">
+import { describe, it, expect } from "vitest";
+import { computeShadowDID, generateDidSalt } from "../src/lib/shadowDid";
+
+describe("generateDidSalt", () => {
+  it("generates a 32-character hex string", () => {
+    const salt = generateDidSalt();
+    expect(salt).toHaveLength(32);
+    expect(salt).toMatch(/^[0-9a-f]{32}$/);
+  });
+
+  it("generates unique salts", () => {
+    const salts = new Set(Array.from({ length: 100 }, () => generateDidSalt()));
+    expect(salts.size).toBe(100);
+  });
+});
+
+describe("computeShadowDID", () => {
+  const secret = "a".repeat(64);
+
+  it("is deterministic for same inputs", () => {
+    const salt = "test-salt";
+    const did1 = computeShadowDID("test@example.com", salt, secret);
+    const did2 = computeShadowDID("test@example.com", salt, secret);
+    expect(did1).toBe(did2);
+  });
+
+  it("normalizes email to lowercase", () => {
+    const salt = "test-salt";
+    const did1 = computeShadowDID("TEST@EXAMPLE.COM", salt, secret);
+    const did2 = computeShadowDID("test@example.com", salt, secret);
+    expect(did1).toBe(did2);
+  });
+
+  it("trims email whitespace", () => {
+    const salt = "test-salt";
+    const did1 = computeShadowDID("  test@example.com  ", salt, secret);
+    const did2 = computeShadowDID("test@example.com", salt, secret);
+    expect(did1).toBe(did2);
+  });
+
+  it("produces different DIDs for different emails", () => {
+    const salt = "test-salt";
+    const did1 = computeShadowDID("alice@example.com", salt, secret);
+    const did2 = computeShadowDID("bob@example.com", salt, secret);
+    expect(did1).not.toBe(did2);
+  });
+
+  it("produces different DIDs for same email with different salts", () => {
+    const did1 = computeShadowDID("test@example.com", "salt-a", secret);
+    const did2 = computeShadowDID("test@example.com", "salt-b", secret);
+    expect(did1).not.toBe(did2);
+  });
+
+  it("produces different DIDs for same email+salt with different secrets", () => {
+    const salt = "test-salt";
+    const did1 = computeShadowDID("test@example.com", salt, "a".repeat(64));
+    const did2 = computeShadowDID("test@example.com", salt, "b".repeat(64));
+    expect(did1).not.toBe(did2);
+  });
+
+  it("produces a 64-character hex string", () => {
+    const did = computeShadowDID("test@example.com", "salt", secret);
+    expect(did).toHaveLength(64);
+    expect(did).toMatch(/^[0-9a-f]{64}$/);
+  });
+});
+</file>
+
+<file path="backend/Dockerfile">
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci
+
+COPY prisma ./prisma
+RUN npx prisma generate
+
+COPY tsconfig.json ./
+COPY src ./src
+RUN npm run build
+
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci --omit=dev
+
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/dist ./dist
+COPY prisma ./prisma
+
+EXPOSE 4000
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:4000/health || exit 1
+
+CMD ["node", "dist/index.js"]
+</file>
+
+<file path="backend/package.json">
+{
+  "name": "petra-backend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.6.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
+    "iron-session": "^8.0.4",
+    "pino": "^9.6.0",
+    "stripe": "^17.7.0",
+    "xrpl": "^4.2.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.0",
+    "nodemon": "^3.1.9",
+    "prisma": "^6.6.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3",
+    "vitest": "^3.1.1"
+  }
+}
+</file>
+
+<file path="backend/README.md">
+# PETRA Backend
+
+Backend Node.js/Express per il protocollo Petra. Gestisce donazioni, certificati crittografici, integrazione Stripe, e anchoring su XRPL.
+
+> **⚠️ Questo backend è in fase di sviluppo. Non è production-ready.**
+
+## Stack
+
+- **Runtime**: Node.js + TypeScript
+- **Framework**: Express
+- **Database**: PostgreSQL via Prisma ORM
+- **Pagamenti**: Stripe Connect
+- **Ledger**: XRPL (XRP Ledger)
+- **Validazione**: Zod
+- **Logging**: Pino
+
+## Setup
+
+```bash
+# Installa le dipendenze
+npm install
+
+# Genera il client Prisma
+npx prisma generate
+
+# Configura le variabili d'ambiente
+cp .env.example .env
+# Compila i valori in .env
+
+# Esegui le migrazioni del database
+npx prisma migrate dev
+
+# Avvia il server in modalità sviluppo
+npm run dev
+```
+
+## Variabili d'ambiente
+
+| Variabile | Descrizione |
+|---|---|
+| `DATABASE_URL` | Connection string PostgreSQL |
+| `XRPL_MASTER_SEED` | Seed dell'account XRPL per il broadcast delle transazioni |
+| `STRIPE_SECRET_KEY` | Chiave segreta Stripe |
+| `STRIPE_WEBHOOK_SECRET` | Secret per la validazione dei webhook Stripe |
+| `SHADOW_DID_SALT` | Salt per la generazione degli shadow DID |
+| `PORT` | Porta del server (default: 4000) |
+
+## Struttura
+
+```
+backend/
+├── prisma/
+│   └── schema.prisma    # Schema del database
+├── src/
+│   └── index.ts         # Entry point Express
+├── .env.example         # Template variabili d'ambiente
+├── package.json
+├── tsconfig.json
+└── README.md
+```
+
+## Schema Database
+
+- **User** — utenti con shadow DID
+- **Donation** — donazioni in centesimi (Int, mai Float) con leaf hash per Merkle tree
+- **Batch** — lotti di donazioni con root hash e transazione XRPL
+- **Project** — progetti di restauro con localizzazione
+
+### Nota su `amount`
+
+Il campo `amount` in `Donation` è di tipo `Int` e rappresenta centesimi. 5.00€ = 500. Questa scelta risolve il problema di determinismo nella serializzazione dei float per il calcolo del Merkle tree.
+</file>
+
+<file path="backend/tsconfig.json">
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "lib": ["ES2020"],
+    "strict": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
+</file>
+
+<file path="backend/vitest.config.ts">
+import { defineConfig } from "vitest/config";
+
+export default defineConfig({
+  test: {
+    globals: true,
+    environment: "node",
+    include: ["tests/**/*.test.ts"],
+  },
+});
+</file>
+
+<file path="frontend/app/[lang]/chi-siamo/page.tsx">
+import type { Metadata } from "next";
+import FadeIn from "@/components/FadeIn";
+import { getDictionary } from "@/app/dictionaries";
+import type { Locale } from "@/i18n.config";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { lang: Locale };
+}): Promise<Metadata> {
+  const dict = await getDictionary(params.lang);
+  return {
+    title: dict.about.title,
+    description: dict.about.intro.substring(0, 155),
+  };
+}
+
+export default async function ChiSiamoPage({
+  params,
+}: {
+  params: { lang: Locale };
+}) {
+  const dict = await getDictionary(params.lang);
+  const t = dict.about;
+
+  return (
+    <section className="pt-40 pb-24 md:pb-40 px-6 md:px-10">
+      <div className="max-w-[1200px] mx-auto">
+        {/* Opening question */}
+        <FadeIn>
+          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
+            <div>
+              <p className="font-body text-xs font-bold tracking-[0.2em] uppercase text-carbon-soft lg:sticky lg:top-32">
+                {t.title}
+              </p>
+            </div>
+            <div>
+              <h1 className="font-display text-[clamp(2rem,4vw,3.5rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-8">
+                {t.title}
+              </h1>
+              <p className="font-body text-base font-light leading-[1.9] text-carbon max-w-[700px]">
+                {t.intro}
+              </p>
+            </div>
+          </div>
+        </FadeIn>
+
+        {/* Mission statement */}
+        <FadeIn>
+          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
+            <div />
+            <div>
+              <h2 className="font-display text-[clamp(1.8rem,3.5vw,3rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-12">
+                {t.missionTitle}
+              </h2>
+              <p className="font-body text-sm font-light leading-[1.9] text-carbon-soft max-w-[700px]">
+                {t.mission}
+              </p>
+            </div>
+          </div>
+        </FadeIn>
+
+        {/* Team */}
+        <FadeIn>
+          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
+            <div />
+            <div>
+              <h2 className="font-display text-[clamp(1.8rem,3.5vw,3rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-12">
+                {t.teamTitle}
+              </h2>
+              <div className="border border-stone-pale max-w-[600px]">
+                {t.team.map((member) => (
+                  <div key={member.name} className="p-8 md:p-10">
+                    <div className="font-body text-sm font-bold tracking-[0.12em] uppercase text-carbon mb-2">
+                      {member.name}
+                    </div>
+                    <div className="font-body text-[10px] font-bold tracking-[0.25em] uppercase text-crimson mb-6">
+                      {member.role}
+                    </div>
+                    <p className="font-body text-sm font-light leading-[1.9] text-carbon-soft">
+                      {member.bio}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+
+        {/* Contact */}
+        <FadeIn>
+          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16">
+            <div />
+            <div>
+              <h2 className="font-display text-[clamp(1.8rem,3.5vw,3rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-8">
+                {t.contactTitle}
+              </h2>
+              <div className="flex flex-col gap-4">
+                <a
+                  href={`mailto:${t.email}`}
+                  className="font-body text-sm font-light text-crimson hover:text-crimson-dark transition-colors duration-300"
+                >
+                  {t.email}
+                </a>
+                <a
+                  href="#"
+                  className="font-body text-sm font-light text-carbon-soft hover:text-carbon transition-colors duration-300"
+                >
+                  {t.linkedin}
+                </a>
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+      </div>
+    </section>
+  );
+}
+</file>
+
+<file path="frontend/app/[lang]/per-gli-enti/page.tsx">
+import type { Metadata } from "next";
+import FadeIn from "@/components/FadeIn";
+import { getDictionary } from "@/app/dictionaries";
+import type { Locale } from "@/i18n.config";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { lang: Locale };
+}): Promise<Metadata> {
+  const dict = await getDictionary(params.lang);
+  return {
+    title: dict.institutions.title,
+    description: dict.institutions.intro.substring(0, 155),
+  };
+}
+
+export default async function PerGliEntiPage({
+  params,
+}: {
+  params: { lang: Locale };
+}) {
+  const dict = await getDictionary(params.lang);
+  const t = dict.institutions;
+
+  return (
+    <section className="pt-40 pb-24 md:pb-40 px-6 md:px-10">
+      <div className="max-w-[1200px] mx-auto">
+        <FadeIn>
+          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
+            <div>
+              <p className="font-body text-xs font-bold tracking-[0.2em] uppercase text-carbon-soft lg:sticky lg:top-32">
+                {t.title}
+              </p>
+            </div>
+            <div>
+              <h1 className="font-display text-[clamp(2rem,4vw,3.5rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-8">
+                {t.title}
+              </h1>
+              <p className="font-body text-sm font-light leading-[1.8] text-carbon-soft max-w-[700px]">
+                {t.intro}
+              </p>
+            </div>
+          </div>
+        </FadeIn>
+
+        <FadeIn>
+          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
+            <div />
+            <div>
+              <h2 className="font-display text-[clamp(1.8rem,3.5vw,3rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-12">
+                {t.howTitle}
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-stone-pale">
+                {t.steps.map((step, i) => (
+                  <div
+                    key={step.num}
+                    className={`p-8 md:p-10 hover:bg-parchment transition-colors duration-300 group ${
+                      i < 2
+                        ? "border-b md:border-b-0 md:border-r border-stone-pale"
+                        : ""
+                    }`}
+                  >
+                    <div className="font-display text-[3rem] font-extrabold text-stone-pale leading-none mb-5 group-hover:text-crimson transition-colors duration-300">
+                      {step.num}
+                    </div>
+                    <div className="font-body text-xs font-bold tracking-[0.12em] uppercase text-carbon mb-3">
+                      {step.title}
+                    </div>
+                    <div className="font-body text-xs font-light leading-[1.7] text-stone">
+                      {step.desc}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+
+        <FadeIn>
+          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16">
+            <div />
+            <div>
+              <a
+                href="mailto:info@petra-protocol.org"
+                className="inline-block font-body text-xs font-bold tracking-widest uppercase text-ivory bg-carbon px-12 py-5 hover:bg-crimson transition-colors duration-500"
+              >
+                {t.cta}
+              </a>
+            </div>
+          </div>
+        </FadeIn>
+      </div>
+    </section>
+  );
+}
+</file>
+
+<file path="frontend/app/[lang]/privacy/page.tsx">
+import type { Metadata } from "next";
+import FadeIn from "@/components/FadeIn";
+import { getDictionary } from "@/app/dictionaries";
+import type { Locale } from "@/i18n.config";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { lang: Locale };
+}): Promise<Metadata> {
+  const dict = await getDictionary(params.lang);
+  return {
+    title: dict.privacy.title,
+    description: dict.privacy.sections[0].content.substring(0, 155),
+  };
+}
+
+export default async function PrivacyPage({
+  params,
+}: {
+  params: { lang: Locale };
+}) {
+  const dict = await getDictionary(params.lang);
+  const t = dict.privacy;
+
+  return (
+    <section className="pt-40 pb-24 md:pb-40 px-6 md:px-10">
+      <div className="max-w-[1200px] mx-auto">
+        <FadeIn>
+          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
+            <div>
+              <p className="font-body text-xs font-bold tracking-[0.2em] uppercase text-carbon-soft lg:sticky lg:top-32">
+                Legal
+              </p>
+            </div>
+            <div>
+              <h1 className="font-display text-[clamp(2rem,4vw,3.5rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-4">
+                {t.title}
+              </h1>
+              <p className="font-body text-[10px] font-bold tracking-[0.25em] uppercase text-stone mb-16">
+                {t.lastUpdated}
+              </p>
+
+              <div className="flex flex-col gap-12 max-w-[700px]">
+                {t.sections.map((section) => (
+                  <div key={section.title}>
+                    <h2 className="font-body text-sm font-bold tracking-[0.12em] uppercase text-carbon mb-3">
+                      {section.title}
+                    </h2>
+                    <p className="font-body text-sm font-light leading-[1.8] text-carbon-soft">
+                      {section.content}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+      </div>
+    </section>
+  );
+}
+</file>
+
+<file path="frontend/app/[lang]/problema/page.tsx">
+import type { Metadata } from "next";
+import FadeIn from "@/components/FadeIn";
+import { getDictionary } from "@/app/dictionaries";
+import type { Locale } from "@/i18n.config";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { lang: Locale };
+}): Promise<Metadata> {
+  const dict = await getDictionary(params.lang);
+  const introText = Array.isArray(dict.problem.intro)
+    ? dict.problem.intro.join(" ")
+    : dict.problem.intro;
+  return {
+    title: dict.problem.title,
+    description: introText.substring(0, 155),
+  };
+}
+
+export default async function ProblemaPage({
+  params,
+}: {
+  params: { lang: Locale };
+}) {
+  const dict = await getDictionary(params.lang);
+  const t = dict.problem;
+
+  return (
+    <section className="pt-40 pb-24 md:pb-40 px-6 md:px-10">
+      <div className="max-w-[1200px] mx-auto">
+        {/* Opening — the hook */}
+        <FadeIn>
+          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
+            <div>
+              <p className="font-body text-xs font-bold tracking-[0.2em] uppercase text-carbon-soft lg:sticky lg:top-32">
+                {t.title}
+              </p>
+            </div>
+            <div>
+              <h1 className="font-display text-[clamp(2rem,4vw,3.5rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-8">
+                {t.title}
+              </h1>
+              <div className="flex flex-col gap-6 max-w-[700px]">
+                {(Array.isArray(t.intro) ? t.intro : [t.intro]).map((paragraph, i) => (
+                  <p key={i} className="font-body text-base font-light leading-[1.9] text-carbon">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+
+        {/* Diagnosis — the economic analysis */}
+        <FadeIn>
+          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
+            <div />
+            <div>
+              <h2 className="font-display text-[clamp(1.8rem,3.5vw,3rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-12">
+                {t.diagnosisTitle}
+              </h2>
+              <div className="flex flex-col gap-8 max-w-[700px]">
+                {t.diagnosis.map((paragraph, i) => (
+                  <p
+                    key={i}
+                    className="font-body text-sm font-light leading-[1.9] text-carbon-soft"
+                  >
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+
+        {/* Three structural obstacles */}
+        <FadeIn>
+          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
+            <div />
+            <div>
+              <h2 className="font-display text-[clamp(1.8rem,3.5vw,3rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-12">
+                {t.bottlenecksTitle}
+              </h2>
+              <div className="grid grid-cols-1 gap-0 border border-stone-pale max-w-[700px]">
+                {t.bottlenecks.map((b, i) => (
+                  <div
+                    key={b.title}
+                    className={`p-8 md:p-10 hover:bg-parchment transition-colors duration-300 group ${
+                      i < t.bottlenecks.length - 1
+                        ? "border-b border-stone-pale"
+                        : ""
+                    }`}
+                  >
+                    <div className="flex items-baseline gap-4 mb-4">
+                      <span className="font-display text-[1.5rem] font-extrabold text-stone-pale leading-none group-hover:text-crimson transition-colors duration-300">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <h3 className="font-body text-sm font-bold tracking-[0.12em] uppercase text-carbon">
+                        {b.title}
+                      </h3>
+                    </div>
+                    <p className="font-body text-sm font-light leading-[1.9] text-carbon-soft">
+                      {b.text}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+
+        {/* Closing note — Petra's position */}
+        <FadeIn>
+          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
+            <div />
+            <div>
+              <div className="border-l-2 border-crimson pl-8 max-w-[700px]">
+                <p className="font-body text-sm font-light leading-[1.9] text-carbon">
+                  {t.note}
+                </p>
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+      </div>
+    </section>
+  );
+}
+</file>
+
+<file path="frontend/app/[lang]/progetti/[id]/page.tsx">
+import type { Metadata } from "next";
+import Link from "next/link";
+import FadeIn from "@/components/FadeIn";
+import { getDictionary } from "@/app/dictionaries";
+import type { Locale } from "@/i18n.config";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { lang: Locale; id: string };
+}): Promise<Metadata> {
+  const dict = await getDictionary(params.lang);
+  const projectData = getStaticProject(params.id, dict);
+  if (!projectData) {
+    return { title: dict.projectPage.notFound };
+  }
+  return {
+    title: projectData.city,
+    description: projectData.description,
+  };
+}
+
+function getStaticProject(
+  id: string,
+  dict: Awaited<ReturnType<typeof getDictionary>>
+) {
+  const projects: Record<string, typeof dict.network.venice> = {
+    venezia: dict.network.venice,
+    venice: dict.network.venice,
+  };
+  return projects[id] ?? null;
+}
+
+interface LiveProjectData {
+  donationCount: number;
+  totalDonatedCents: number;
+  status: string;
+}
+
+async function fetchProjectData(id: string): Promise<LiveProjectData | null> {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (!apiUrl) return null;
+
+  try {
+    const res = await fetch(`${apiUrl}/api/projects/${id}`, {
+      next: { revalidate: 60 },
+    });
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
+}
+
+function formatCents(cents: number): string {
+  return new Intl.NumberFormat("it-IT", {
+    style: "currency",
+    currency: "EUR",
+  }).format(cents / 100);
+}
+
+export default async function ProgettoPage({
+  params,
+}: {
+  params: { lang: Locale; id: string };
+}) {
+  const dict = await getDictionary(params.lang);
+  const project = getStaticProject(params.id, dict);
+  const t = dict.projectPage;
+
+  if (!project) {
+    return (
+      <section className="pt-40 pb-24 md:pb-40 px-6 md:px-10">
+        <div className="max-w-[1200px] mx-auto">
+          <FadeIn>
+            <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16">
+              <div />
+              <div>
+                <h1 className="font-display text-[clamp(2rem,4vw,3.5rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-8">
+                  {t.notFound}
+                </h1>
+                <p className="font-body text-sm font-light leading-[1.8] text-carbon-soft mb-12">
+                  {t.notFoundDesc}
+                </p>
+                <Link
+                  href={`/${params.lang}`}
+                  className="font-body text-sm font-light text-crimson hover:text-crimson-dark transition-colors duration-300"
+                >
+                  {t.backLink}
+                </Link>
+              </div>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+    );
+  }
+
+  // Try to fetch live data from API
+  const liveData = await fetchProjectData(params.id);
+
+  return (
+    <section className="pt-40 pb-24 md:pb-40 px-6 md:px-10">
+      <div className="max-w-[1200px] mx-auto">
+        <FadeIn>
+          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
+            <div>
+              <p className="font-body text-xs font-bold tracking-[0.2em] uppercase text-carbon-soft lg:sticky lg:top-32">
+                {dict.network.sidebarLabel}
+              </p>
+            </div>
+            <div>
+              <Link
+                href={`/${params.lang}`}
+                className="font-body text-xs font-light text-crimson hover:text-crimson-dark transition-colors duration-300 mb-12 inline-block"
+              >
+                {t.backLink}
+              </Link>
+
+              <h1 className="font-display text-[clamp(2rem,4vw,3.5rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-4">
+                {project.city}
+              </h1>
+              <div className="font-body text-[10px] font-bold tracking-[0.25em] uppercase text-crimson mb-12">
+                {project.status}
+              </div>
+              <p className="font-body text-sm font-light leading-[1.8] text-carbon-soft max-w-[700px]">
+                {project.longDescription}
+              </p>
+            </div>
+          </div>
+        </FadeIn>
+
+        <FadeIn>
+          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
+            <div />
+            <div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-stone-pale">
+                {[
+                  { label: t.timelineLabel, value: project.timeline },
+                  { label: t.targetLabel, value: project.target },
+                  { label: t.partnerLabel, value: project.partner },
+                ].map((item, i) => (
+                  <div
+                    key={item.label}
+                    className={`p-8 md:p-10 hover:bg-parchment transition-colors duration-300 ${
+                      i < 2
+                        ? "border-b md:border-b-0 md:border-r border-stone-pale"
+                        : ""
+                    }`}
+                  >
+                    <div className="font-body text-[10px] font-bold tracking-[0.25em] uppercase text-stone mb-3">
+                      {item.label}
+                    </div>
+                    <div className="font-body text-sm font-light leading-[1.8] text-carbon">
+                      {item.value}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+
+        {/* Live donation data when API is available */}
+        {liveData && (
+          <FadeIn>
+            <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16">
+              <div />
+              <div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-crimson/20">
+                  <div className="p-8 md:p-10 border-b md:border-b-0 md:border-r border-crimson/20">
+                    <div className="font-body text-[10px] font-bold tracking-[0.25em] uppercase text-crimson mb-3">
+                      Donazioni raccolte
+                    </div>
+                    <div className="font-display text-[clamp(1.5rem,3vw,2.5rem)] font-extrabold text-carbon leading-none">
+                      {formatCents(liveData.totalDonatedCents)}
+                    </div>
+                  </div>
+                  <div className="p-8 md:p-10">
+                    <div className="font-body text-[10px] font-bold tracking-[0.25em] uppercase text-crimson mb-3">
+                      Numero donazioni
+                    </div>
+                    <div className="font-display text-[clamp(1.5rem,3vw,2.5rem)] font-extrabold text-carbon leading-none">
+                      {liveData.donationCount}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+        )}
+      </div>
+    </section>
+  );
+}
+</file>
+
+<file path="frontend/app/[lang]/termini/page.tsx">
+import type { Metadata } from "next";
+import FadeIn from "@/components/FadeIn";
+import { getDictionary } from "@/app/dictionaries";
+import type { Locale } from "@/i18n.config";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { lang: Locale };
+}): Promise<Metadata> {
+  const dict = await getDictionary(params.lang);
+  return {
+    title: dict.terms.title,
+    description: dict.terms.sections[0].content.substring(0, 155),
+  };
+}
+
+export default async function TerminiPage({
+  params,
+}: {
+  params: { lang: Locale };
+}) {
+  const dict = await getDictionary(params.lang);
+  const t = dict.terms;
+
+  return (
+    <section className="pt-40 pb-24 md:pb-40 px-6 md:px-10">
+      <div className="max-w-[1200px] mx-auto">
+        <FadeIn>
+          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
+            <div>
+              <p className="font-body text-xs font-bold tracking-[0.2em] uppercase text-carbon-soft lg:sticky lg:top-32">
+                Legal
+              </p>
+            </div>
+            <div>
+              <h1 className="font-display text-[clamp(2rem,4vw,3.5rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-4">
+                {t.title}
+              </h1>
+              <p className="font-body text-[10px] font-bold tracking-[0.25em] uppercase text-stone mb-16">
+                {t.lastUpdated}
+              </p>
+
+              <div className="flex flex-col gap-12 max-w-[700px]">
+                {t.sections.map((section) => (
+                  <div key={section.title}>
+                    <h2 className="font-body text-sm font-bold tracking-[0.12em] uppercase text-carbon mb-3">
+                      {section.title}
+                    </h2>
+                    <p className="font-body text-sm font-light leading-[1.8] text-carbon-soft">
+                      {section.content}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+      </div>
+    </section>
+  );
+}
+</file>
+
+<file path="frontend/app/[lang]/trasparenza/page.tsx">
+import type { Metadata } from "next";
+import FadeIn from "@/components/FadeIn";
+import { getDictionary } from "@/app/dictionaries";
+import type { Locale } from "@/i18n.config";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { lang: Locale };
+}): Promise<Metadata> {
+  const dict = await getDictionary(params.lang);
+  return {
+    title: dict.transparency.title,
+    description: dict.transparency.intro.substring(0, 155),
+  };
+}
+
+interface BatchData {
+  id: string;
+  rootHash: string;
+  xrplTxHash: string | null;
+  status: string;
+  leafCount: number;
+  totalAmount: number;
+  createdAt: string;
+}
+
+async function fetchBatches(): Promise<BatchData[]> {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (!apiUrl) return [];
+
+  try {
+    const res = await fetch(`${apiUrl}/api/batches`, {
+      next: { revalidate: 60 },
+    });
+    if (!res.ok) return [];
+    return res.json();
+  } catch {
+    return [];
+  }
+}
+
+function formatCents(cents: number): string {
+  return new Intl.NumberFormat("it-IT", {
+    style: "currency",
+    currency: "EUR",
+  }).format(cents / 100);
+}
+
+function truncateHash(hash: string): string {
+  return `${hash.slice(0, 8)}...${hash.slice(-8)}`;
+}
+
+export default async function TrasparenzaPage({
+  params,
+}: {
+  params: { lang: Locale };
+}) {
+  const dict = await getDictionary(params.lang);
+  const t = dict.transparency;
+  const h = t.tableHeaders;
+
+  const batches = await fetchBatches();
+  const hasBatches = batches.length > 0;
+
+  return (
+    <section className="pt-40 pb-24 md:pb-40 px-6 md:px-10">
+      <div className="max-w-[1200px] mx-auto">
+        <FadeIn>
+          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
+            <div>
+              <p className="font-body text-xs font-bold tracking-[0.2em] uppercase text-carbon-soft lg:sticky lg:top-32">
+                {t.title}
+              </p>
+            </div>
+            <div>
+              <h1 className="font-display text-[clamp(2rem,4vw,3.5rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-8">
+                {t.title}
+              </h1>
+              <p className="font-body text-sm font-light leading-[1.8] text-carbon-soft max-w-[700px]">
+                {t.intro}
+              </p>
+            </div>
+          </div>
+        </FadeIn>
+
+        {/* Batch Table */}
+        <FadeIn>
+          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
+            <div />
+            <div>
+              <div className="border border-stone-pale overflow-x-auto">
+                <table className="w-full min-w-[700px]">
+                  <thead>
+                    <tr className="border-b border-stone-pale bg-ivory-deep">
+                      <th className="p-4 text-left font-body text-[10px] font-bold tracking-[0.2em] uppercase text-carbon-soft">
+                        {h.id}
+                      </th>
+                      <th className="p-4 text-left font-body text-[10px] font-bold tracking-[0.2em] uppercase text-carbon-soft">
+                        {h.donations}
+                      </th>
+                      <th className="p-4 text-left font-body text-[10px] font-bold tracking-[0.2em] uppercase text-carbon-soft">
+                        {h.rootHash}
+                      </th>
+                      <th className="p-4 text-left font-body text-[10px] font-bold tracking-[0.2em] uppercase text-carbon-soft">
+                        {h.xrplTx}
+                      </th>
+                      <th className="p-4 text-left font-body text-[10px] font-bold tracking-[0.2em] uppercase text-carbon-soft">
+                        {h.status}
+                      </th>
+                      <th className="p-4 text-left font-body text-[10px] font-bold tracking-[0.2em] uppercase text-carbon-soft">
+                        {h.date}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {hasBatches ? (
+                      batches.map((batch) => (
+                        <tr
+                          key={batch.id}
+                          className="border-b border-stone-pale/50 hover:bg-parchment transition-colors duration-300"
+                        >
+                          <td className="p-4 font-body text-xs text-carbon font-mono">
+                            {truncateHash(batch.id)}
+                          </td>
+                          <td className="p-4 font-body text-xs text-carbon">
+                            {batch.leafCount} ({formatCents(batch.totalAmount)})
+                          </td>
+                          <td className="p-4 font-body text-xs text-carbon font-mono">
+                            {truncateHash(batch.rootHash)}
+                          </td>
+                          <td className="p-4 font-body text-xs">
+                            {batch.xrplTxHash ? (
+                              <a
+                                href={`https://testnet.xrpl.org/transactions/${batch.xrplTxHash}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-crimson hover:text-crimson-dark transition-colors duration-300"
+                              >
+                                {truncateHash(batch.xrplTxHash)}
+                              </a>
+                            ) : (
+                              <span className="text-stone">—</span>
+                            )}
+                          </td>
+                          <td className="p-4">
+                            <span
+                              className={`font-body text-[10px] font-bold tracking-widest uppercase ${
+                                batch.status === "COMMITTED"
+                                  ? "text-green-700"
+                                  : batch.status === "FAILED"
+                                  ? "text-crimson"
+                                  : "text-stone"
+                              }`}
+                            >
+                              {batch.status}
+                            </span>
+                          </td>
+                          <td className="p-4 font-body text-xs text-carbon-soft">
+                            {new Date(batch.createdAt).toLocaleDateString()}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={6} className="p-12 text-center">
+                          <p className="font-body text-sm font-light leading-[1.8] text-stone">
+                            {t.emptyState}
+                          </p>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+
+        {/* Verification Process */}
+        <FadeIn>
+          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16">
+            <div />
+            <div>
+              <h2 className="font-display text-[clamp(1.8rem,3.5vw,3rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-12">
+                {t.howTitle}
+              </h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-stone-pale">
+                {t.howSteps.map((step, i) => (
+                  <div
+                    key={i}
+                    className={`p-8 md:p-10 hover:bg-parchment transition-colors duration-300 group ${
+                      i < t.howSteps.length - 1
+                        ? "border-b md:border-b border-stone-pale"
+                        : ""
+                    } ${i % 2 === 0 ? "md:border-r border-stone-pale" : ""}`}
+                  >
+                    <div className="font-display text-[2rem] font-extrabold text-stone-pale leading-none mb-4 group-hover:text-crimson transition-colors duration-300">
+                      {String(i + 1).padStart(2, "0")}
+                    </div>
+                    <p className="font-body text-xs font-light leading-[1.7] text-carbon-soft">
+                      {step}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+      </div>
+    </section>
+  );
+}
+</file>
+
+<file path="frontend/app/[lang]/error.tsx">
+"use client";
+
+import Link from "next/link";
+
+export default function Error({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  return (
+    <div className="min-h-screen flex items-center justify-center px-6">
+      <div className="max-w-[500px] text-center">
+        <div className="font-display text-[5rem] font-extrabold text-stone-pale leading-none mb-8">
+          !
+        </div>
+        <h2 className="font-display text-3xl font-bold text-carbon mb-6">
+          Si è verificato un errore
+        </h2>
+        <p className="font-body text-sm font-light text-carbon-soft mb-12 leading-[1.8]">
+          {error.message || "Qualcosa è andato storto. Riprova tra qualche istante."}
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <button
+            onClick={reset}
+            className="font-body text-xs font-bold tracking-widest uppercase text-ivory bg-carbon px-12 py-5 hover:bg-crimson transition-colors duration-500"
+          >
+            Riprova
+          </button>
+          <Link
+            href="/"
+            className="font-body text-xs font-bold tracking-widest uppercase text-carbon border border-carbon px-12 py-5 hover:bg-carbon hover:text-ivory transition-all duration-500"
+          >
+            Torna alla home
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+</file>
+
+<file path="frontend/app/[lang]/layout.tsx">
+import "../globals.css";
+import type { Metadata } from "next";
+import { DM_Sans, Playfair_Display } from "next/font/google";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import Analytics from "@/components/Analytics";
+import ServiceWorker from "@/components/ServiceWorker";
+import { getDictionary } from "@/app/dictionaries";
+import type { Locale } from "@/i18n.config";
+
+const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-sans" });
+const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-serif" });
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { lang: string };
+}): Promise<Metadata> {
+  const locale = params.lang === "en" ? "en_US" : "it_IT";
+  const description =
+    params.lang === "en"
+      ? "Digital infrastructure for the conservation of cultural and artistic heritage."
+      : "Infrastruttura digitale per la conservazione del patrimonio culturale e artistico.";
+
+  return {
+    metadataBase: new URL("https://petra.io"),
+    title: {
+      default: "PETRA",
+      template: "%s — PETRA",
+    },
+    description,
+    openGraph: {
+      title: "PETRA",
+      description,
+      url: "https://petra.io",
+      siteName: "PETRA",
+      images: [
+        {
+          url: "/og-image.png",
+          width: 1024,
+          height: 1024,
+          alt: "PETRA - Cultural Heritage Conservation",
+        },
+      ],
+      locale,
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "PETRA",
+      description,
+      images: ["/og-image.png"],
+    },
+    icons: {
+      icon: "/Petra-logo.svg",
+      shortcut: "/Petra-logo.svg",
+      apple: "/Petra-logo.svg",
+    },
+    manifest: "/manifest.json",
+  };
+}
+
+export default async function RootLayout({
   children,
   params,
 }: {
   children: React.ReactNode;
-  params: { lang: string };
+  params: { lang: Locale };
 }) {
+  const dict = await getDictionary(params.lang);
+
   return (
     <html lang={params.lang} className={`${dmSans.variable} ${playfair.variable}`}>
       <body className="antialiased font-sans">
-        {children}
+        <Navbar dict={dict.nav} lang={params.lang} />
+        <main className="min-h-screen bg-ivory selection:bg-crimson selection:text-parchment">
+          {children}
+        </main>
+        <Footer dict={dict.footer} lang={params.lang} />
+        <Analytics />
+        <ServiceWorker />
       </body>
     </html>
   );
 }
 </file>
 
+<file path="frontend/app/[lang]/loading.tsx">
+export default function Loading() {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="flex flex-col items-center gap-6">
+        <div className="w-10 h-10 border-2 border-stone-pale border-t-crimson animate-spin" />
+        <p className="font-body text-xs tracking-[0.2em] uppercase text-stone animate-pulse">
+          Caricamento...
+        </p>
+      </div>
+    </div>
+  );
+}
+</file>
+
 <file path="frontend/app/[lang]/page.tsx">
-import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import System from "@/components/System";
 import Network from "@/components/Network";
-import Footer from "@/components/Footer";
- 
-export default function Home() {
+import { getDictionary } from "@/app/dictionaries";
+import type { Locale } from "@/i18n.config";
+
+export default async function Home({
+  params,
+}: {
+  params: { lang: Locale };
+}) {
+  const dict = await getDictionary(params.lang);
+
   return (
-    <main className="min-h-screen bg-ivory selection:bg-crimson selection:text-parchment">
-      <Navbar />
-      <Hero />
-      <System />
-      <Network />
-      <Footer />
-    </main>
+    <>
+      <Hero dict={dict.hero} />
+      <System dict={dict.system} />
+      <Network dict={dict.network} />
+    </>
   );
 }
 </file>
 
 <file path="frontend/app/dictionaries.ts">
-import type { Locale } from '../i18n.config';
+import { cache } from "react";
+import type { Locale } from "../i18n.config";
 
 const dictionaries = {
-  it: () => import('../dictionaries/it.json').then((module) => module.default),
-  en: () => import('../dictionaries/en.json').then((module) => module.default),
+  it: () => import("../dictionaries/it.json").then((module) => module.default),
+  en: () => import("../dictionaries/en.json").then((module) => module.default),
 };
 
-export const getDictionary = async (locale: Locale) => {
+export const getDictionary = cache(async (locale: Locale) => {
   return dictionaries[locale]?.() ?? dictionaries.it();
-};
+});
+
+export type Dictionary = Awaited<ReturnType<typeof getDictionary>>;
+</file>
+
+<file path="frontend/app/robots.ts">
+import type { MetadataRoute } from "next";
+
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: {
+      userAgent: "*",
+      allow: "/",
+      disallow: ["/api/"],
+    },
+    sitemap: "https://petra.io/sitemap.xml",
+  };
+}
+</file>
+
+<file path="frontend/app/sitemap.ts">
+import type { MetadataRoute } from "next";
+
+const BASE_URL = "https://petra.io";
+const LOCALES = ["it", "en"];
+const ROUTES = [
+  "",
+  "/problema",
+  "/chi-siamo",
+  "/per-gli-enti",
+  "/privacy",
+  "/termini",
+  "/trasparenza",
+  "/progetti/venezia",
+];
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  return LOCALES.flatMap((locale) =>
+    ROUTES.map((route) => ({
+      url: `${BASE_URL}/${locale}${route}`,
+      lastModified: new Date(),
+      changeFrequency: route === "" ? ("weekly" as const) : ("monthly" as const),
+      priority: route === "" ? 1 : 0.8,
+    }))
+  );
+}
+</file>
+
+<file path="frontend/components/Analytics.tsx">
+import Script from "next/script";
+
+export default function Analytics() {
+  const domain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
+  if (!domain) return null;
+
+  return (
+    <Script
+      defer
+      data-domain={domain}
+      src="https://plausible.io/js/script.js"
+      strategy="afterInteractive"
+    />
+  );
+}
+</file>
+
+<file path="frontend/components/FadeIn.tsx">
+"use client";
+
+import { useRef, useEffect, useState, type ReactNode } from "react";
+
+interface FadeInProps {
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+}
+
+export default function FadeIn({ children, className = "", delay = 0 }: FadeInProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className={`transition-all duration-700 ease-out ${
+        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+      } ${className}`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+}
+</file>
+
+<file path="frontend/components/ImpactChart.tsx">
+"use client";
+
+import { useEffect, useState } from "react";
+import FadeIn from "@/components/FadeIn";
+
+interface ScenarioData {
+  label: string;
+  visitors: string;
+  conversionRate: string;
+  avgDonation: string;
+  annualRevenue: number;
+  facades: number;
+  color: string;
+}
+
+const SCENARIOS: ScenarioData[] = [
+  {
+    label: "Conservativo",
+    visitors: "30M",
+    conversionRate: "0.5%",
+    avgDonation: "€5",
+    annualRevenue: 750000,
+    facades: 15,
+    color: "bg-stone",
+  },
+  {
+    label: "Base",
+    visitors: "30M",
+    conversionRate: "1%",
+    avgDonation: "€5",
+    annualRevenue: 1500000,
+    facades: 30,
+    color: "bg-crimson",
+  },
+  {
+    label: "Ottimistico",
+    visitors: "30M",
+    conversionRate: "3%",
+    avgDonation: "€5",
+    annualRevenue: 4500000,
+    facades: 90,
+    color: "bg-carbon",
+  },
+];
+
+const MAX_REVENUE = 4500000;
+
+function formatCurrency(cents: number): string {
+  return new Intl.NumberFormat("it-IT", {
+    style: "currency",
+    currency: "EUR",
+    maximumFractionDigits: 0,
+  }).format(cents);
+}
+
+interface ImpactChartProps {
+  dict: {
+    title: string;
+    subtitle: string;
+    scenarioLabel: string;
+    visitorsLabel: string;
+    conversionLabel: string;
+    avgLabel: string;
+    revenueLabel: string;
+    facadesLabel: string;
+  };
+}
+
+export default function ImpactChart({ dict }: ImpactChartProps) {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setVisible(true), 300);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <div>
+      <h3 className="font-display text-[clamp(1.3rem,2.5vw,2rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-4">
+        {dict.title}
+      </h3>
+      <p className="font-body text-sm font-light leading-[1.8] text-carbon-soft max-w-[600px] mb-12">
+        {dict.subtitle}
+      </p>
+
+      <div className="flex flex-col gap-6 mb-12">
+        {SCENARIOS.map((s, i) => {
+          const pct = (s.annualRevenue / MAX_REVENUE) * 100;
+          return (
+            <div key={i} className="flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <span className="font-body text-xs font-bold tracking-[0.12em] uppercase text-carbon">
+                  {s.label}
+                </span>
+                <span className="font-body text-xs font-light text-carbon-soft">
+                  {formatCurrency(s.annualRevenue)}/anno → {s.facades} facciate
+                </span>
+              </div>
+              <div className="w-full h-8 bg-ivory-deep border border-stone-pale relative overflow-hidden">
+                <div
+                  className={`h-full ${s.color} transition-all duration-1000 ease-out`}
+                  style={{ width: visible ? `${pct}%` : "0%" }}
+                />
+              </div>
+              <div className="flex gap-6">
+                <span className="font-body text-[10px] text-stone">
+                  {dict.conversionLabel}: {s.conversionRate}
+                </span>
+                <span className="font-body text-[10px] text-stone">
+                  {dict.avgLabel}: {s.avgDonation}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <p className="font-body text-[10px] font-light text-stone italic">
+        {dict.visitorsLabel}: ~30M/anno. {dict.facadesLabel}: ~€50.000/facciata.
+      </p>
+    </div>
+  );
+}
+</file>
+
+<file path="frontend/components/ServiceWorker.tsx">
+"use client";
+
+import { useEffect } from "react";
+
+export default function ServiceWorker() {
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js");
+    }
+  }, []);
+
+  return null;
+}
 </file>
 
 <file path="frontend/dictionaries/en.json">
 {
-  "common": {
+  "nav": {
     "protocol": "Protocol",
     "network": "Network",
-    "donate": "Donate",
-    "mission": "Mission",
-    "impact": "Impact"
+    "problem": "The Problem",
+    "about": "About Us",
+    "langSwitch": "IT"
+  },
+  "hero": {
+    "subtitle": "Preserving history through innovation",
+    "pillars": [
+      {
+        "eyebrow": "Mission",
+        "text": "Preserving humanity's cultural heritage."
+      },
+      {
+        "eyebrow": "Protocol",
+        "text": "Transparent, verifiable, traceable."
+      },
+      {
+        "eyebrow": "Impact",
+        "text": "Enable restorations where this aren't happening."
+      }
+    ]
+  },
+  "system": {
+    "sidebarLabel": "PROTOCOL",
+    "blockA": {
+      "title": "How It Works",
+      "description": "Petra simplifies the mobilization of micro-donations by directly connecting assets to visitors.",
+      "steps": [
+        {
+          "num": "01",
+          "title": "Scan",
+          "desc": "the QR code you find around."
+        },
+        {
+          "num": "02",
+          "title": "Donate",
+          "desc": "the amount you prefer."
+        },
+        {
+          "num": "03",
+          "title": "Receive",
+          "desc": "a certificate of your donation."
+        }
+      ]
+    },
+    "blockB": {
+      "title": "The Certificate",
+      "description": "Every donation is automatically anchored on a public distributed ledger.",
+      "cards": [
+        {
+          "icon": "◈",
+          "title": "Unique",
+          "desc": "each certificate is derived from the donation."
+        },
+        {
+          "icon": "▣",
+          "title": "Verifiable",
+          "desc": "anyone can verify legitimacy by comparing the cryptographic proof against the public ledger."
+        },
+        {
+          "icon": "§",
+          "title": "Permanent",
+          "desc": "once anchored on the ledger, the hash proofs cannot be altered."
+        }
+      ]
+    },
+    "blockC": {
+      "title": "Where Funds Go",
+      "description": "A disintermediated model to maximize impact on restoration.",
+      "features": [
+        {
+          "title": "Directly",
+          "desc": "to the responsible for restoration."
+        },
+        {
+          "title": "Traceable",
+          "desc": "impact is recorded and viewable through your certificates."
+        }
+      ]
+    }
+  },
+  "network": {
+    "sidebarLabel": "Network",
+    "partnerTitle": "Become a Partner",
+    "partners": [
+      {
+        "icon": "§",
+        "title": "Non-profit organization",
+        "desc": "Explore the possibility of collaborating with Petra.",
+        "link": "Collaborate"
+      },
+      {
+        "icon": "◈",
+        "title": "Business",
+        "desc": "Align your brand with our mission.",
+        "link": "Become a partner"
+      }
+    ]
+  },
+  "footer": {
+    "brand": "preserving cultural heritage.",
+    "systemLabel": "Protocol",
+    "systemLinks": [
+      "How it works",
+      "The Certificate",
+      "Where Funds Go"
+    ],
+    "networkLabel": "Network",
+    "becomePartner": "Become a Partner",
+    "transparencyLink": "Transparency",
+    "legalLabel": "Legal",
+    "privacyLink": "Privacy Policy",
+    "termsLink": "Terms of Service",
+    "copyright": "© 2026 PETRA — Protocol for Cultural Heritage.",
+    "cookieText": "Cookie and Privacy"
+  },
+  "problem": {
+    "title": "The Problem",
+    "intro": [
+      "Walk through a city of art. Look up. The architecture that define these places — the reason millions of people cross the world — is falling apart. Not through negligence, but through a systemic failure.",
+      "Over-tourism, high costs of restoration, public benefit, no mechanism to directly internalize tourists willingness-to-pay.",
+      "This leads to the growing degradation of the architectural heritage that has an intrinsic very relevant historical-artistic value."
+    ],
+    "diagnosisTitle": "What happens?",
+    "diagnosis": [
+      "It is a textbook case of an uncompensated positive externality.",
+      "The owner pays. The tourist benefits. The owner stops paying. The tourist keeps coming, until there is nothing left to see. The result is chronic underinvestment in maintenance: not because owners don't care, but because the market fails to transfer to them the value their patrimony creates."
+    ],
+    "bottlenecksTitle": "Three structural obstacles",
+    "bottlenecks": [
+      {
+        "title": "Capital",
+        "text": "Restoring historic goods with artistic value is expensive. For the owners, it is a sunk cost: the value it generates — a more attractive urban landscape, a more livable city — is captured by the public, not by the one who pays. In the absence of compensation mechanisms, underinvestment is rational."
+      },
+      {
+        "title": "Coordination",
+        "text": "Many of these goods have multiple owners, divergent interests, fragmented decision-making. Even when the will exists, there is no infrastructure to coordinate the intervention, aggregate resources, and manage the relationship with heritage authorities."
+      },
+      {
+        "title": "Authorization",
+        "text": "Heritage protection regulations safeguard the patrimony, but in the absence of streamlined approval processes, they discourage even owners who want to act. The result is a system where restoring is harder than letting decay."
+      }
+    ],
+    "note": "Petra aims to heal the first pathology: capital. It does so with a mechanism that transfers micro-mecenatism value directly to those who steward the heritage. Coordination and authorization problems require different institutional reforms — but without resources, any reform would remain on paper."
+  },
+  "about": {
+    "title": "About Us",
+    "intro": "Petra was born from a simple question: why the people who visit art cities around the world every year don't contribute directly to the conservation of what they came to see?",
+    "missionTitle": "The mission",
+    "mission": "We are not a restoration association. We are not a crowdfunding platform. Petra is a protocol — a digital infrastructure that connects the tourists to the maintenance need. A QR code. A donation. A cryptographic certificate proving where every cent went. Our goal is to make contributing to beauty as natural as taking a photo.",
+    "teamTitle": "Who's behind it",
+    "team": [
+      {
+        "name": "Umberto Toraldo",
+        "role": "Founder",
+        "bio": "Economics student. He dedicated his bachelor's thesis to the ex-ante evaluation of crowdfunding as a financing tool for private architectural heritage in Venice. Petra is the operational translation of that research: an attempt to field-test a hypothesis born in the data."
+      }
+    ],
+    "contactTitle": "Let's talk",
+    "email": "info@petra-protocol.org",
+    "linkedin": "LinkedIn"
+  },
+  "institutions": {
+    "title": "Become a Partner",
+    "intro": "Petra offers local administrations and cultural institutions a digital infrastructure to mobilize tourist micro-donations towards the restoration of architectural heritage in their territory.",
+    "howTitle": "How it works for you",
+    "steps": [
+      {
+        "num": "01",
+        "title": "Partnership",
+        "desc": "We sign a collaboration agreement. Petra provides the infrastructure, the institution identifies the construction sites."
+      },
+      {
+        "num": "02",
+        "title": "Operations",
+        "desc": "QR codes installed at construction sites. Donations go directly to t."
+      },
+      {
+        "num": "03",
+        "title": "Data",
+        "desc": "You receive quarterly reports and tourist willingness-to-pay data, usable for your policy decisions."
+      }
+    ],
+    "cta": "Write to us for an assessment"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "April 2026",
+    "sections": [
+      {
+        "title": "Data Controller",
+        "content": "The data controller is PETRA Protocol. For any request regarding data processing: info@petra-protocol.org."
+      },
+      {
+        "title": "Data Collected",
+        "content": "We collect the following data: email address (for donation-related communications), donation amounts and details, browsing data through technical cookies, and a Shadow DID (pseudonymized identifier generated by the system)."
+      },
+      {
+        "title": "Purpose of Processing",
+        "content": "Data is processed for: donation management and issuance of cryptographic certificates, communications regarding project status, and service improvement."
+      },
+      {
+        "title": "Legal Basis",
+        "content": "Processing is based on: contract execution (for donations and certificates), data subject consent (for communications), and legitimate interest of the controller (for service operation and security)."
+      },
+      {
+        "title": "Data Retention",
+        "content": "Data is retained for the time necessary for the stated purposes. Cryptographic certificates, by their nature, are permanent and immutable once anchored on XRP Ledger."
+      },
+      {
+        "title": "Data Subject Rights",
+        "content": "The data subject has the right to access, rectification, erasure, portability, objection, and restriction of processing. To exercise your rights: info@petra-protocol.org."
+      },
+      {
+        "title": "Cookies",
+        "content": "We exclusively use technical cookies necessary for the website's operation. We do not use profiling cookies or third-party cookies for advertising purposes."
+      },
+      {
+        "title": "Contact",
+        "content": "For any privacy-related request: info@petra-protocol.org."
+      }
+    ]
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "lastUpdated": "April 2026",
+    "sections": [
+      {
+        "title": "Service Description",
+        "content": "Petra is a non-profit platform that facilitates micro-donations for the restoration of private architectural heritage in art cities. The service is provided free of charge to donors."
+      },
+      {
+        "title": "Donations",
+        "content": "Donations made through Petra are voluntary and non-refundable. Funds are transferred directly to the account of the local entity responsible for restoration via Stripe Connect, without passing through Petra's accounts."
+      },
+      {
+        "title": "Cryptographic Certificates",
+        "content": "For each donation, Petra issues a verifiable cryptographic certificate, anchored on XRP Ledger. The certificate attests to the donation but does not confer property rights, credits, or any other real or personal rights."
+      },
+      {
+        "title": "Intellectual Property",
+        "content": "The name \"Petra\", the logo, the protocol, and all website content are intellectual property of Petra Protocol and are protected by applicable law."
+      },
+      {
+        "title": "Limitation of Liability",
+        "content": "Petra does not guarantee the completion of restoration projects. Funds are transferred to the responsible entities, which independently manage the planning and execution of interventions."
+      },
+      {
+        "title": "Amendments",
+        "content": "Petra reserves the right to modify these terms at any time. Changes will be published on this page, and continued use of the service implies acceptance of the new terms."
+      },
+      {
+        "title": "Applicable Law and Jurisdiction",
+        "content": "These terms are governed by Italian law. For any dispute, the Court of Venice has jurisdiction."
+      }
+    ]
+  },
+  "transparency": {
+    "title": "Transparency",
+    "intro": "Every donation collected through Petra is mathematically verifiable. This public registry shows all donation batches anchored on XRP Ledger.",
+    "tableHeaders": {
+      "id": "Batch ID",
+      "donations": "Donations",
+      "rootHash": "Merkle Root",
+      "xrplTx": "XRPL TX",
+      "status": "Status",
+      "date": "Date"
+    },
+    "emptyState": "No batches registered yet. The first batch will be published with the launch of the Venice pilot project in 2027.",
+    "howTitle": "How verification works",
+    "howSteps": [
+      "Each donation generates a unique cryptographic hash (leaf hash).",
+      "Periodically, leaf hashes are aggregated into a Merkle tree.",
+      "The Merkle root is published as a transaction on XRP Ledger.",
+      "Anyone can verify that a specific donation is included in the batch by comparing the cryptographic proof against the public registry."
+    ]
+  },
+  "projectPage": {
+    "statusLabel": "Status",
+    "timelineLabel": "Timeline",
+    "targetLabel": "Target",
+    "partnerLabel": "Partner",
+    "backLink": "← Back to home",
+    "notFound": "Project not found",
+    "notFoundDesc": "The requested project does not exist or is not yet active."
   }
 }
 </file>
 
 <file path="frontend/dictionaries/it.json">
 {
-  "common": {
+  "nav": {
     "protocol": "Protocollo",
     "network": "Network",
-    "donate": "Dona",
-    "mission": "Missione",
-    "impact": "Impatto"
+    "problem": "Il Problema",
+    "about": "Chi Siamo",
+    "langSwitch": "EN"
+  },
+  "hero": {
+    "subtitle": "preserviamo la storia tramite l'innovazione",
+    "pillars": [
+      {
+        "eyebrow": "Missione",
+        "text": "Preservare il patrimonio culturale dell'umanità."
+      },
+      {
+        "eyebrow": "Protocollo",
+        "text": "Trasparente, verificabile, tracciabile."
+      },
+      {
+        "eyebrow": "Impatto",
+        "text": "Avviamo i restauri dove questi non avvengono."
+      }
+    ]
+  },
+  "system": {
+    "sidebarLabel": "PROTOCOLLO",
+    "blockA": {
+      "title": "Come Funziona",
+      "description": "Petra semplifica la mobilitazione di micro-donazioni collegando direttamente i beni ai visitatori.",
+      "steps": [
+        {
+          "num": "01",
+          "title": "Scansiona",
+          "desc": "il QR code che trovi in giro."
+        },
+        {
+          "num": "02",
+          "title": "Dona",
+          "desc": "l'importo che preferisci."
+        },
+        {
+          "num": "03",
+          "title": "Ricevi",
+          "desc": "un certificato per la tua donazione."
+        }
+      ]
+    },
+    "blockB": {
+      "title": "Il Certificato",
+      "description": "Ogni donazione è ancorata automaticamente su un registro pubblico distribuito.",
+      "cards": [
+        {
+          "icon": "◈",
+          "title": "Unico",
+          "desc": "ogni certificato è derivato dalla tua donazione."
+        },
+        {
+          "icon": "▣",
+          "title": "Verificabile",
+          "desc": "chiunque può verificare la legittimità confrontando la prova crittografica con il registro pubblico."
+        },
+        {
+          "icon": "§",
+          "title": "Permanente",
+          "desc": "una volta ancorate sul ledger, le hash proofs non possono essere alterate."
+        }
+      ]
+    },
+    "blockC": {
+      "title": "Dove Vanno i Fondi",
+      "description": "Un modello disintermediato per massimizzare l'impatto sul restauro.",
+      "features": [
+        {
+          "title": "Direttamente",
+          "desc": "al responsabile del restauro."
+        },
+        {
+          "title": "Tracciabili",
+          "desc": "l'impatto è registrato e verificabile tramite i tuoi certificati."
+        }
+      ]
+    }
+  },
+  "network": {
+    "sidebarLabel": "Network",
+    "partnerTitle": "Diventa Partner",
+    "partners": [
+      {
+        "icon": "§",
+        "title": "Ente non-profit",
+        "desc": "Verifica la possibilità di una collaborazione con Petra.",
+        "link": "Collabora"
+      },
+      {
+        "icon": "◈",
+        "title": "Attività commerciale",
+        "desc": "Allinea il tuo brand alla nostra missione.",
+        "link": "Diventa partner"
+      }
+    ]
+  },
+  "footer": {
+    "brand": "per la tutela del patrimonio culturale.",
+    "systemLabel": "Protocollo",
+    "systemLinks": [
+      "Come Funziona",
+      "Il Certificato",
+      "Dove Vanno i Fondi"
+    ],
+    "networkLabel": "Network",
+    "becomePartner": "Diventa Partner",
+    "transparencyLink": "Trasparenza",
+    "legalLabel": "Legal",
+    "privacyLink": "Privacy Policy",
+    "termsLink": "Termini di Servizio",
+    "copyright": "© 2026 PETRA — Protocol for Cultural Heritage.",
+    "cookieText": "Cookie e Privacy"
+  },
+  "problem": {
+    "title": "Il Problema",
+    "intro": "Cammina per una città d'arte. Alza lo sguardo. L'architettura che definisce questi luoghi — il motivo per cui le persone attraversano il mondo — sta cadendo a pezzi. Non per incuria, ma per un difetto di sistema.",
+    "diagnosisTitle": "Che succede?",
+    "diagnosis": [
+      "È un caso da manuale di esternalità positiva non compensata.",
+      "Il proprietario paga. Il turista beneficia. Il proprietario smette di pagare. Il turista continua a venire, finché non c'è più nulla da vedere. Il risultato è un sotto-investimento cronico nella manutenzione: non perché i proprietari non vogliano, ma perché il mercato non trasferisce a loro il valore che le facciate creano."
+    ],
+    "bottlenecksTitle": "Tre ostacoli strutturali",
+    "bottlenecks": [
+      {
+        "title": "Capitale",
+        "text": "Il restauro di un bene storico è un intervento costoso. Per il proprietario, è una spesa a fondo perduto: il valore che genera — un paesaggio urbano più attrattivo, una città più vivibile — viene catturato dalla collettività, non da chi paga. In assenza di meccanismi di compensazione, il sotto-investimento è razionale."
+      },
+      {
+        "title": "Coordinamento",
+        "text": "Molti di questi beni hanno più proprietari, interessi divergenti, processi decisionali frammentati. Anche quando la volontà c'è, manca un'infrastruttura che coordini l'intervento, aggreghi le risorse, e gestisca la relazione con le soprintendenze."
+      },
+      {
+        "title": "Autorizzazione",
+        "text": "I vincoli della Soprintendenza proteggono il patrimonio, ma nell'assenza di percorsi procedurali snelli, scoraggiano gli interventi. Il risultato è un sistema dove restaurare è più difficile che lasciar degradare."
+      }
+    ],
+    "note": "Petra mira a sanare la prima patologia: il capitale. Lo fa con un meccanismo di micro-mecenatismo per il co-finanziamento dei restauri. I problemi di coordinamento e autorizzazione richiedono interventi istituzionali diversi — ma senza risorse, qualsiasi riforma resterebbe sulla carta."
+  },
+  "about": {
+    "title": "Chi Siamo",
+    "intro": "Petra nasce da una domanda semplice: perché le persone che ogni anno visitano le città d'arte non contribuiscono direttamente alla conservazione di ciò che sono venute a vedere?",
+    "missionTitle": "La missione",
+    "mission": "Non siamo un'associazione di restauro. Non siamo una piattaforma di crowdfunding. Petra è un protocollo — un'infrastruttura digitale che connette il gesto turistico al bisogno manutentivo. Un QR code. Una donazione. Un certificato crittografico che prova dove è finito ogni centesimo. Il nostro obiettivo è rendere il contributo alla bellezza un atto naturale quanto scattare una foto.",
+    "teamTitle": "Chi c'è dietro",
+    "team": [
+      {
+        "name": "Umberto Toraldo",
+        "role": "Founder",
+        "bio": "Studente di economia e sviluppatore. Ha dedicato la tesi triennale alla valutazione ex-ante del crowdfunding come strumento di co-finanziamento per il patrimonio architettonico privato a Venezia. Petra è la traduzione operativa di quella ricerca: un tentativo di verificare un'ipotesi sul campo."
+      }
+    ],
+    "contactTitle": "Parliamone",
+    "email": "info@petra-protocol.org",
+    "linkedin": "LinkedIn"
+  },
+  "institutions": {
+    "title": "Diventa Partner",
+    "intro": "Petra offre alle amministrazioni locali e agli enti culturali un'infrastruttura digitale per mobilitare micro-donazioni turistiche verso il restauro del patrimonio architettonico nel proprio territorio.",
+    "howTitle": "Come funziona per voi",
+    "steps": [
+      {
+        "num": "01",
+        "title": "Partnership",
+        "desc": "Firmiamo un accordo di collaborazione. Petra fornisce l'infrastruttura, l'ente identifica i cantieri."
+      },
+      {
+        "num": "02",
+        "title": "Operatività",
+        "desc": "QR code installati sui cantieri. Le donazioni arrivano direttamente al vostro conto via Stripe Connect."
+      },
+      {
+        "num": "03",
+        "title": "Dati",
+        "desc": "Ricevete reportistica trimestrale e dati di willingness-to-pay dei turisti, utilizzabili per le vostre decisioni di policy."
+      }
+    ],
+    "cta": "Scriveteci per una valutazione"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Aprile 2026",
+    "sections": [
+      {
+        "title": "Titolare del trattamento",
+        "content": "Il titolare del trattamento dei dati personali è PETRA Protocol. Per qualsiasi richiesta relativa al trattamento dei dati: info@petra-protocol.org."
+      },
+      {
+        "title": "Dati raccolti",
+        "content": "Raccogliamo i seguenti dati: indirizzo email (per comunicazioni relative alle donazioni), importo e dettagli delle donazioni, dati di navigazione attraverso cookie tecnici, e uno Shadow DID (identificativo pseudonimizzato generato dal sistema)."
+      },
+      {
+        "title": "Finalità del trattamento",
+        "content": "I dati vengono trattati per: gestione delle donazioni ed emissione dei certificati crittografici, comunicazioni relative allo stato dei progetti, e miglioramento del servizio."
+      },
+      {
+        "title": "Base giuridica",
+        "content": "Il trattamento si basa su: esecuzione del contratto (per le donazioni e i certificati), consenso dell'interessato (per le comunicazioni), e legittimo interesse del titolare (per il funzionamento e la sicurezza del servizio)."
+      },
+      {
+        "title": "Conservazione dei dati",
+        "content": "I dati vengono conservati per il tempo necessario alle finalità indicate. I certificati crittografici, per loro natura, sono permanenti e immutabili una volta ancorati su XRP Ledger."
+      },
+      {
+        "title": "Diritti dell'interessato",
+        "content": "L'interessato ha diritto di accesso, rettifica, cancellazione, portabilità, opposizione e limitazione del trattamento. Per esercitare i propri diritti: info@petra-protocol.org."
+      },
+      {
+        "title": "Cookie",
+        "content": "Utilizziamo esclusivamente cookie tecnici necessari al funzionamento del sito. Non utilizziamo cookie di profilazione né cookie di terze parti per fini pubblicitari."
+      },
+      {
+        "title": "Contatti",
+        "content": "Per qualsiasi richiesta relativa alla privacy: info@petra-protocol.org."
+      }
+    ]
+  },
+  "terms": {
+    "title": "Termini di Servizio",
+    "lastUpdated": "Aprile 2026",
+    "sections": [
+      {
+        "title": "Oggetto del servizio",
+        "content": "Petra è una piattaforma non-profit che facilita micro-donazioni per il restauro di patrimonio architettonico privato in città d'arte. Il servizio è fornito a titolo gratuito per i donatori."
+      },
+      {
+        "title": "Donazioni",
+        "content": "Le donazioni effettuate tramite Petra sono volontarie e non rimborsabili. I fondi vengono trasferiti direttamente al conto dell'ente locale responsabile del restauro tramite Stripe Connect, senza transitare su conti di Petra."
+      },
+      {
+        "title": "Certificati crittografici",
+        "content": "Per ogni donazione, Petra emette un certificato crittografico verificabile, ancorato su XRP Ledger. Il certificato attesta l'avvenuta donazione ma non conferisce diritti di proprietà, crediti o qualsiasi altro diritto reale o personale."
+      },
+      {
+        "title": "Proprietà intellettuale",
+        "content": "Il nome \"Petra\", il logo, il protocollo e tutti i contenuti del sito sono proprietà intellettuale di Petra Protocol e sono protetti dalle leggi vigenti."
+      },
+      {
+        "title": "Limitazione di responsabilità",
+        "content": "Petra non garantisce il completamento dei progetti di restauro. I fondi vengono trasferiti agli enti responsabili, che gestiscono autonomamente la pianificazione e l'esecuzione degli interventi."
+      },
+      {
+        "title": "Modifiche ai termini",
+        "content": "Petra si riserva il diritto di modificare i presenti termini in qualsiasi momento. Le modifiche saranno pubblicate su questa pagina e l'uso continuato del servizio implica l'accettazione dei nuovi termini."
+      },
+      {
+        "title": "Legge applicabile e foro competente",
+        "content": "I presenti termini sono regolati dalla legge italiana. Per qualsiasi controversia è competente il Foro di Venezia."
+      }
+    ]
+  },
+  "transparency": {
+    "title": "Trasparenza",
+    "intro": "Ogni donazione raccolta tramite Petra è matematicamente verificabile. Questo registro pubblico mostra tutti i batch di donazioni ancorati su XRP Ledger.",
+    "tableHeaders": {
+      "id": "Batch ID",
+      "donations": "Donazioni",
+      "rootHash": "Merkle Root",
+      "xrplTx": "TX XRPL",
+      "status": "Stato",
+      "date": "Data"
+    },
+    "emptyState": "Nessun batch ancora registrato. Il primo batch verrà pubblicato con il lancio del progetto pilota Venezia nel 2027.",
+    "howTitle": "Come funziona la verifica",
+    "howSteps": [
+      "Ogni donazione genera un hash crittografico unico (leaf hash).",
+      "Periodicamente, i leaf hash vengono aggregati in un Merkle tree.",
+      "La Merkle root viene pubblicata come transazione su XRP Ledger.",
+      "Chiunque può verificare che una donazione specifica sia inclusa nel batch confrontando la proof crittografica con il registro pubblico."
+    ]
+  },
+  "projectPage": {
+    "statusLabel": "Stato",
+    "timelineLabel": "Timeline",
+    "targetLabel": "Obiettivo",
+    "partnerLabel": "Partner",
+    "backLink": "← Torna alla home",
+    "notFound": "Progetto non trovato",
+    "notFoundDesc": "Il progetto richiesto non esiste o non è ancora attivo."
   }
 }
 </file>
@@ -210,453 +3819,6 @@ export const getDictionary = async (locale: Locale) => {
       "type": "image/svg+xml"
     }
   ]
-}
-</file>
-
-<file path="frontend/i18n.config.ts">
-export const i18n = {
-  defaultLocale: 'it',
-  locales: ['it', 'en'],
-} as const;
-
-export type Locale = (typeof i18n)["locales"][number];
-</file>
-
-<file path="frontend/middleware.ts">
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import { i18n } from './i18n.config';
-
-function getLocale(request: NextRequest): string {
-  const acceptLanguage = request.headers.get('accept-language');
-  if (!acceptLanguage) return i18n.defaultLocale;
-  
-  // Basic priority matching
-  const languages = acceptLanguage.split(',').map((l) => l.split(';')[0].trim().toLowerCase());
-  for (const lang of languages) {
-    if (lang.startsWith('it')) return 'it';
-    if (lang.startsWith('en')) return 'en';
-  }
-  
-  return i18n.defaultLocale;
-}
-
-export function middleware(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
-
-  // Check if there is any supported locale in the pathname
-  const pathnameIsMissingLocale = i18n.locales.every(
-    (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
-  );
-
-  // Redirect if there is no locale
-  if (pathnameIsMissingLocale) {
-    const locale = getLocale(request);
-
-    return NextResponse.redirect(
-      new URL(
-        `/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`,
-        request.url
-      )
-    );
-  }
-}
-
-export const config = {
-  // Configured to avoid static files, API routes, and Next.js internal assets
-  matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|manifest.json|Petra-logo.svg|og-image.png|favicon).*)',
-  ],
-};
-</file>
-
-<file path="backend/Bdescription">
-Repository inviata a Render o Heroku.
-Contiene i server/middleware Node.js con directory isolate per singole funzioni 
-    come API per esporre gli endpoint al frontend, webhooks per ricevere e validare le conferme di pagamento da Stripe, 
-    DB per i modelli relazionali di PostgreSQL, Redis per il ricalcolo delle classifiche, 
-    web3 oppure xrpl per gli script di aggregazione dei lotti ed il calcolo della Merkle Root ed il broadcast della transazione al ledger pubblico.
-</file>
-
-<file path="frontend/app/globals.css">
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer base {
-  html {
-    scroll-behavior: smooth;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  body {
-    @apply font-body text-base font-normal leading-[1.7] text-carbon bg-ivory overflow-x-hidden;
-  }
-
-  ::selection {
-    @apply bg-crimson text-ivory;
-  }
-}
-
-@layer utilities {
-  .animate-fade-up {
-    animation: fadeUp 0.8s ease forwards;
-    opacity: 0;
-  }
-
-  .animation-delay-200 {
-    animation-delay: 200ms;
-  }
-
-  .animation-delay-400 {
-    animation-delay: 400ms;
-  }
-
-  .animation-delay-600 {
-    animation-delay: 600ms;
-  }
-
-  .animation-delay-800 {
-    animation-delay: 800ms;
-  }
-
-  .animate-scroll-pulse {
-    animation: scrollPulse 2s ease infinite;
-  }
-}
-
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(25px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes scrollPulse {
-  0% {
-    transform: translateX(-100%);
-  }
-  50% {
-    transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
-</file>
-
-<file path="frontend/components/Network.tsx">
-export default function Network() {
-  return (
-    <section id="network" className="bg-ivory-deep py-32 md:py-48 px-6 md:px-10">
-      <div className="max-w-[1200px] mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-12 lg:gap-20">
-          {/* Sidebar Label */}
-          <div>
-            <p className="font-body text-xs font-bold tracking-[0.3em] uppercase text-stone lg:sticky lg:top-32">
-              Network
-            </p>
-          </div>
- 
-          <div>
-            {/* ── City Nodes ── */}
-            <h2 className="font-display text-[clamp(2rem,4vw,3.5rem)] font-bold leading-tight tracking-tight text-carbon mb-6">
-              Progetti Attivi
-            </h2>
-            <p className="font-body text-base font-light leading-relaxed text-carbon-soft max-w-[700px] mb-16">
-              Ogni progetto ha la sua interfaccia. Garantiamo
-              interoperabilità e continuità dell&apos;account di ogni donatore.
-            </p>
- 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-0 border border-carbon/15 mb-32">
-              {[
-                {
-                  city: "Venezia",
-                  status: "INCOMING",
-                  active: true,
-                },
-                {
-                  city: "loading...",
-                  status: "loading...",
-                  active: false,
-                },
-                {
-                  city: "....",
-                  status: "....",
-                  active: false,
-                },
-              ].map((node, i) => (
-                <div
-                  key={i}
-                  className={`p-12 flex flex-col items-center justify-center min-h-[200px] transition-all duration-700 group ${
-                    node.active
-                      ? "hover:bg-carbon cursor-pointer"
-                      : "opacity-40"
-                  } ${
-                    i < 2
-                      ? "border-b sm:border-b-0 sm:border-r border-carbon/15"
-                      : ""
-                  }`}
-                >
-                  <div
-                    className={`font-body text-sm font-bold tracking-[0.25em] uppercase mb-3 transition-colors duration-500 ${
-                      node.active
-                        ? "text-carbon group-hover:text-ivory"
-                        : "text-stone"
-                    }`}
-                  >
-                    {node.city}
-                  </div>
-                  <div
-                    className={`font-body text-[10px] font-widest transition-colors duration-500 ${
-                      node.active
-                        ? "text-stone group-hover:text-stone-pale"
-                        : "text-stone-light"
-                    }`}
-                  >
-                    {node.status}
-                  </div>
-                </div>
-              ))}
-            </div>
- 
-            {/* ── Partner Onboarding ── */}
-            <h2 className="font-display text-[clamp(2rem,4vw,3.5rem)] font-bold text-carbon mb-6">
-              Diventa Partner
-            </h2>
- 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-carbon/15 mb-16">
-              {[
-                {
-                  icon: "§",
-                  title: "Ente non-profit",
-                  desc: "Verifica la possibilità di una collaborazione con Petra.",
-                  link: "Collabora",
-                },
-                {
-                  icon: "◈",
-                  title: "Attività commerciale",
-                  desc: "Allinea il tuo brand alla tutela del patrimonio artistico.",
-                  link: "Diventa partner",
-                },
-              ].map((card, i) => (
-                <div
-                  key={i}
-                  className={`p-12 bg-ivory hover:bg-white transition-all duration-500 group ${
-                    i === 0
-                      ? "border-b md:border-b-0 md:border-r border-carbon/15"
-                      : ""
-                  }`}
-                >
-                  <div className="w-14 h-14 border border-crimson/30 flex items-center justify-center font-display text-2xl text-crimson mb-8 group-hover:bg-crimson group-hover:text-ivory transition-all duration-500">
-                    {card.icon}
-                  </div>
-                  <div className="font-body text-[13px] font-bold tracking-wider uppercase text-carbon mb-4">
-                    {card.title}
-                  </div>
-                  <div className="font-body text-sm font-light leading-relaxed text-carbon-soft/80 mb-8">
-                    {card.desc}
-                  </div>
-                  <a
-                    href="#"
-                    className="font-body text-xs font-bold uppercase text-crimson flex items-center gap-3 group-hover:gap-5 transition-all duration-500"
-                  >
-                    {card.link} <span>→</span>
-                  </a>
-                </div>
-              ))}
-            </div>
- 
-            {/* CTA */}
-            <div className="pt-8">
-              <a
-                href="#"
-                className="inline-block font-body text-xs font-bold tracking-widest uppercase text-ivory bg-carbon px-12 py-5 hover:bg-crimson transition-colors duration-500"
-              >
-                Scarica il whitepaper
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-</file>
-
-<file path="frontend/components/System.tsx">
-export default function System() {
-  return (
-    <section
-      id="sistema"
-      className="bg-ivory-deep py-24 md:py-40 px-6 md:px-10"
-    >
-      <div className="max-w-[1200px] mx-auto">
-        {/* ── BLOCK A: Come Funziona ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
-          {/* Sidebar Label */}
-          <div>
-            <p className="font-body text-xs font-bold tracking-[0.2em] uppercase text-carbon-soft lg:sticky lg:top-32">
-              PROTOCOLLO
-            </p>
-          </div>
-  
-          {/* Content */}
-          <div>
-            <h2 className="font-display text-[clamp(1.8rem,3.5vw,3rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-4">
-              Come Funziona
-            </h2>
-            <p className="font-body text-sm font-light leading-[1.8] text-carbon-soft max-w-[700px] mb-12">
-              Petra semplifica la mobilitazione di micro-donazioni collegando direttamente i beni architettonici ai visitatori.
-            </p>
-  
-            {/* 3-Step Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-stone-pale">
-              {[
-                {
-                  num: "01",
-                  title: "Scansiona",
-                  desc: "il QR code sul cantiere.",
-                },
-                {
-                  num: "02",
-                  title: "Dona",
-                  desc: "l'importo che preferisci, a partire da 3.50€.",
-                },
-                {
-                  num: "03",
-                  title: "Ricevi",
-                  desc: "un certificato crittografico verificabile, unico per la tua donazione.",
-                },
-              ].map((step, i) => (
-                <div
-                  key={step.num}
-                  className={`p-8 md:p-10 hover:bg-parchment transition-colors duration-300 group ${
-                    i < 2
-                      ? "border-b md:border-b-0 md:border-r border-stone-pale"
-                      : ""
-                  }`}
-                >
-                  <div className="font-display text-[3rem] font-extrabold text-stone-pale leading-none mb-5 group-hover:text-crimson transition-colors duration-300">
-                    {step.num}
-                  </div>
-                  <div className="font-body text-xs font-bold tracking-[0.12em] uppercase text-carbon mb-3">
-                    {step.title}
-                  </div>
-                  <div className="font-body text-xs font-light leading-[1.7] text-stone">
-                    {step.desc}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-  
-        {/* ── BLOCK B: Il Certificato ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
-          <div />
-  
-          <div>
-            <h2 className="font-display text-[clamp(1.8rem,3.5vw,3rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-4">
-              Il Certificato
-            </h2>
-            <p className="font-body text-sm font-light leading-[1.8] text-carbon-soft max-w-[700px] mb-12">
-              Ogni donazione è ancorata matematicamente su un registro pubblico distribuito (XRPL).
-            </p>
-  
-            {/* 3 Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-stone-pale">
-              {[
-                {
-                  icon: "◈",
-                  title: "Unico",
-                  desc: "ogni certificato è derivato dall'hash della tua donazione specifica, nessun certificato è uguale a un altro.",
-                },
-                {
-                  icon: "▣",
-                  title: "Verificabile",
-                  desc: "chiunque può verificare l'autenticità confrontando la prova crittografica con il registro pubblico XRPL, senza fidarsi di Petra.",
-                },
-                {
-                  icon: "§",
-                  title: "Permanente",
-                  desc: "una volta ancorato sul ledger, il certificato non può essere alterato né cancellato.",
-                },
-              ].map((card, i) => (
-                <div
-                  key={i}
-                  className={`p-8 md:p-10 hover:bg-parchment transition-colors duration-300 group ${
-                    i < 2
-                      ? "border-b md:border-b-0 md:border-r border-stone-pale"
-                      : ""
-                  }`}
-                >
-                  <div className="w-12 h-12 border-[1.5px] border-crimson flex items-center justify-center font-display text-xl font-extrabold text-crimson mb-6 group-hover:bg-crimson group-hover:text-ivory transition-all duration-300">
-                    {card.icon}
-                  </div>
-                  <div className="font-body text-xs font-bold tracking-[0.12em] uppercase text-carbon mb-3">
-                    {card.title}
-                  </div>
-                  <div className="font-body text-xs font-light leading-[1.7] text-stone">
-                    {card.desc}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-  
-        {/* ── BLOCK C: Dove Vanno i Fondi ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16">
-          <div />
-  
-          <div>
-            <h2 className="font-display text-[clamp(1.8rem,3.5vw,3rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-4">
-              Dove Vanno i Fondi
-            </h2>
-            <p className="font-body text-sm font-light leading-[1.8] text-carbon-soft max-w-[700px] mb-12">
-              Un modello disintermediato per massimizzare l'impatto sul restauro architettonico.
-            </p>
-  
-            {/* 2 Feature Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-stone-pale">
-              {[
-                {
-                  title: "Direttamente al beneficiario",
-                  desc: "i fondi vengono trasferiti automaticamente al conto dell'ente locale responsabile del restauro, senza transitare su Petra.",
-                },
-                {
-                  title: "Tracciabili",
-                  desc: "ogni transazione è registrata e consultabile nella dashboard di trasparenza pubblica.",
-                },
-              ].map((feat, i) => (
-                <div
-                  key={i}
-                  className={`p-8 md:p-10 hover:bg-parchment transition-colors duration-300 group ${
-                    i === 0
-                      ? "border-b md:border-b-0 md:border-r border-stone-pale"
-                      : ""
-                  }`}
-                >
-                  <div className="font-body text-xs font-bold tracking-[0.12em] uppercase text-carbon mb-3">
-                    {feat.title}
-                  </div>
-                  <div className="font-body text-xs font-light leading-[1.7] text-stone">
-                    {feat.desc}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
 }
 </file>
 
@@ -906,12 +4068,116 @@ export default function System() {
        transform="scale(0.26458333)" /></g></svg>
 </file>
 
+<file path="frontend/public/sw.js">
+const CACHE_NAME = "petra-v1";
+const STATIC_ASSETS = [
+  "/Petra-logo.svg",
+  "/manifest.json",
+];
+
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
+  );
+  self.skipWaiting();
+});
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(
+        keys
+          .filter((key) => key !== CACHE_NAME)
+          .map((key) => caches.delete(key))
+      )
+    )
+  );
+  self.clients.claim();
+});
+
+self.addEventListener("fetch", (event) => {
+  if (event.request.method !== "GET") return;
+
+  event.respondWith(
+    caches.match(event.request).then((cached) => {
+      const fetchPromise = fetch(event.request).then((response) => {
+        if (response.ok) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, clone);
+          });
+        }
+        return response;
+      });
+      return cached || fetchPromise;
+    })
+  );
+});
+</file>
+
 <file path="frontend/Fdescription">
 Repository esposta tramite Vercel.
 Contiene unicamente il Next.js relativo al client, suddiviso in sottocartelle come UI, mappe, grafiche dell’album 
     ed i file di configurazione della PWA quindi manifest e service workers 
     e le logiche client-side per interrogare il server. 
 Sono da EVITARE chiavi private o seed crittografici o logiche di connessione diretta ai database.
+</file>
+
+<file path="frontend/i18n.config.ts">
+export const i18n = {
+  defaultLocale: 'it',
+  locales: ['it', 'en'],
+} as const;
+
+export type Locale = (typeof i18n)["locales"][number];
+</file>
+
+<file path="frontend/middleware.ts">
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { i18n } from './i18n.config';
+
+function getLocale(request: NextRequest): string {
+  const acceptLanguage = request.headers.get('accept-language');
+  if (!acceptLanguage) return i18n.defaultLocale;
+  
+  // Basic priority matching
+  const languages = acceptLanguage.split(',').map((l) => l.split(';')[0].trim().toLowerCase());
+  for (const lang of languages) {
+    if (lang.startsWith('it')) return 'it';
+    if (lang.startsWith('en')) return 'en';
+  }
+  
+  return i18n.defaultLocale;
+}
+
+export function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+
+  // Check if there is any supported locale in the pathname
+  const pathnameIsMissingLocale = i18n.locales.every(
+    (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
+  );
+
+  // Redirect if there is no locale
+  if (pathnameIsMissingLocale) {
+    const locale = getLocale(request);
+
+    return NextResponse.redirect(
+      new URL(
+        `/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`,
+        request.url
+      )
+    );
+  }
+}
+
+export const config = {
+  // Configured to avoid static files, API routes, and Next.js internal assets
+  matcher: [
+    '/((?!api|_next/static|_next/image|favicon.ico|manifest.json|Petra-logo.svg|og-image.png|sw.js|sitemap.xml|robots.txt|favicon).*)',
+  ],
+};
 </file>
 
 <file path="frontend/next-env.d.ts">
@@ -965,291 +4231,275 @@ module.exports = {
 };
 </file>
 
-<file path=".gitignore">
-frontend/node_modules/
-.next/
-out/
-build/
-.DS_Store
-*.env
-</file>
+<file path="frontend/app/globals.css">
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-<file path="frontend/components/Footer.tsx">
-export default function Footer() {
-  return (
-    <footer className="bg-carbon text-stone border-t border-crimson py-24 px-6 md:px-10">
-      <div className="max-w-[1200px] mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20 pb-16 border-b border-white/5">
-          {/* Brand */}
-          <div>
-            <div className="font-display text-2xl font-bold tracking-[0.35em] uppercase text-ivory mb-6">
-              P&nbsp;E&nbsp;T&nbsp;R&nbsp;A
-            </div>
-            <p className="font-body text-xs font-light leading-relaxed text-stone-light max-w-[280px] opacity-70">
-              per la tutela del patrimonio culturale.
-            </p>
-          </div>
- 
-          {/* Sistema */}
-          <div>
-            <div className="font-body text-[10px] font-bold tracking-[0.25em] uppercase text-crimson mb-8">
-              Sistema
-            </div>
-            <ul className="flex flex-col gap-3.5">
-              <li>
-                <a href="#sistema" className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
-                  Protocollo
-                </a>
-              </li>
-              <li>
-                <a href="#sistema" className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
-                  Petra Cards e Petri
-                </a>
-              </li>
-              <li>
-                <a href="#sistema" className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
-                  Web App e Mappe
-                </a>
-              </li>
-            </ul>
-          </div>
- 
-          {/* Network */}
-          <div>
-            <div className="font-body text-[10px] font-bold tracking-[0.25em] uppercase text-crimson mb-8">
-              Network
-            </div>
-            <ul className="flex flex-col gap-3.5">
-              <li>
-                <a href="#network" className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
-                  Progetti Attivi
-                </a>
-              </li>
-              <li>
-                <a href="#network" className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
-                  Diventa Partner
-                </a>
-              </li>
-              <li>
-                <a href="#" className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
-                  Whitepaper
-                </a>
-              </li>
-            </ul>
-          </div>
- 
-          {/* Istituzionale */}
-          <div>
-            <div className="font-body text-[10px] font-bold tracking-[0.25em] uppercase text-crimson mb-8">
-              Legal
-            </div>
-            <ul className="flex flex-col gap-3.5">
-              <li>
-                <a href="#" className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
-                  Termini di Servizio
-                </a>
-              </li>
-              <li>
-                <a href="#" className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
-                  Privacy Policy
-                </a>
-              </li>
-              <li>
-                <a href="#" className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
-                  Licenze
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
- 
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 opacity-40">
-          <div className="font-body text-[10px] text-stone-light tracking-widest uppercase">
-            © 2026 PETRA — Protocol for Cultural Heritage.
-          </div>
-          <div className="flex gap-8">
-            <a href="#" className="font-body text-[10px] text-stone-light hover:text-ivory transition-colors duration-500 uppercase tracking-widest">
-              Cookie
-            </a>
-            <a href="#" className="font-body text-[10px] text-stone-light hover:text-ivory transition-colors duration-500 uppercase tracking-widest">
-              GDPR
-            </a>
-          </div>
-        </div>
-      </div>
-    </footer>
-  );
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply font-body text-base font-normal leading-[1.7] text-carbon bg-ivory overflow-x-hidden;
+  }
+
+  ::selection {
+    @apply bg-crimson text-ivory;
+  }
+}
+
+@layer utilities {
+  .animate-fade-up {
+    animation: fadeUp 0.8s ease forwards;
+    opacity: 0;
+  }
+
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+
+  .animation-delay-600 {
+    animation-delay: 600ms;
+  }
+
+  .animation-delay-800 {
+    animation-delay: 800ms;
+  }
+
+  .animate-scroll-pulse {
+    animation: scrollPulse 2s ease infinite;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scrollPulse {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 </file>
 
-<file path="frontend/components/Hero.tsx">
-import Image from "next/image";
- 
-export default function Hero() {
-  return (
-    <section className="flex flex-col items-center w-full bg-ivory">
-      
-      {/* Schermata Iniziale: Solo Logo e Titolo */}
-      <div className="min-h-screen w-full flex flex-col items-center justify-center pt-20 px-6 md:px-10">
-        <div className="mb-0">
-         <Image
-           src="/Petra-logo.svg"
-           alt="Petra"
-           width={432}
-           height={432}
-           className="w-[432px] h-[432px] object-contain opacity-[0.95]"
-         />
-        </div>
- 
-        <h1 className="font-display text-[clamp(3rem,7vw,6.5rem)] font-bold tracking-[0.35em] uppercase text-carbon text-center">
-          P&nbsp;E&nbsp;T&nbsp;R&nbsp;A
-        </h1>
-        <p className="mt-4 font-body text-xs md:text-sm tracking-wide uppercase text-carbon-soft text-center px-4">
-          Securing cultural heritage through a global patronage protocol
-        </p>
-      </div>
- 
-      {/* Sezione di transizione: Divider e Pilastri */}
-      <div className="w-full bg-ivory-deep flex flex-col items-center px-6 md:px-10 py-32 border-t border-stone-pale/50">
-        <div className="w-full max-w-[1200px] h-px bg-carbon/10 mb-16" />
- 
-        <div className="w-full max-w-[1200px] grid grid-cols-1 md:grid-cols-3 gap-0 border border-carbon/10">
-          {[
-            {
-              eyebrow: "Missione",
-              text: "Preservare il patrimonio culturale dell'umanità.",
-            },
-            {
-              eyebrow: "Protocollo",
-              text: "Trasparente, permanente, immutabile.",
-            },
-            {
-              eyebrow: "Impatto",
-              text: "Permettiamo a tutti di esserne custodi attivi ed ai responsabili di navigare tra gli alti costi di restauro.",
-            },
-          ].map((pillar, i) => (
-            <div
-              key={i}
-              className={`p-10 bg-ivory/50 hover:bg-white transition-all duration-500 ease-in-out group ${
-                i < 2 ? "border-b md:border-b-0 md:border-r border-carbon/10" : ""
-              }`}
-            >
-              <h3 className="font-body text-xs font-bold tracking-[0.2em] uppercase text-crimson mb-6 group-hover:translate-x-1 transition-transform duration-500">
-                {pillar.eyebrow}
-              </h3>
-              <p className="font-body text-sm font-light leading-[1.85] text-carbon-soft">
-                {pillar.text}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
+<file path="frontend/components/Network.tsx">
+import FadeIn from "@/components/FadeIn";
+import type { Dictionary } from "@/app/dictionaries";
 
+interface NetworkProps {
+  dict: Dictionary["network"];
+}
+
+export default function Network({ dict }: NetworkProps) {
+  return (
+    <section id="network" className="bg-ivory-deep py-32 md:py-48 px-6 md:px-10">
+      <div className="max-w-[1200px] mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-12 lg:gap-20">
+          <div>
+            <p className="font-body text-xs font-bold tracking-[0.3em] uppercase text-stone lg:sticky lg:top-32">
+              {dict.sidebarLabel}
+            </p>
+          </div>
+
+          <div>
+            {/* ── Partner Onboarding ── */}
+            <FadeIn>
+              <h2 className="font-display text-[clamp(2rem,4vw,3.5rem)] font-bold text-carbon mb-6">
+                {dict.partnerTitle}
+              </h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-carbon/15">
+                {dict.partners.map((card, i) => (
+                  <div
+                    key={i}
+                    className={`p-12 bg-ivory hover:bg-white transition-all duration-500 group ${
+                      i === 0
+                        ? "border-b md:border-b-0 md:border-r border-carbon/15"
+                        : ""
+                    }`}
+                  >
+                    <div className="w-14 h-14 border border-crimson/30 flex items-center justify-center font-display text-2xl text-crimson mb-8 group-hover:bg-crimson group-hover:text-ivory transition-all duration-500">
+                      {card.icon}
+                    </div>
+                    <div className="font-body text-[13px] font-bold tracking-wider uppercase text-carbon mb-4">
+                      {card.title}
+                    </div>
+                    <div className="font-body text-sm font-light leading-relaxed text-carbon-soft/80 mb-8">
+                      {card.desc}
+                    </div>
+                    <a
+                      href="mailto:info@petra-protocol.org"
+                      className="font-body text-xs font-bold uppercase text-crimson flex items-center gap-3 group-hover:gap-5 transition-all duration-500"
+                    >
+                      {card.link} <span>→</span>
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </FadeIn>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }
 </file>
 
-<file path="frontend/components/navbar.tsx">
-"use client";
- 
-import { useState, useEffect } from "react";
-import Image from "next/image";
- 
-const NAV_LINKS = [
-  { href: "#sistema", label: "Protocollo" },
-  { href: "#network", label: "Network" },
-];
- 
-export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
- 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
- 
-  const scrollTo = (href: string) => {
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-    setMobileOpen(false);
-  };
- 
+<file path="frontend/components/System.tsx">
+import FadeIn from "@/components/FadeIn";
+import type { Dictionary } from "@/app/dictionaries";
+
+interface SystemProps {
+  dict: Dictionary["system"];
+}
+
+export default function System({ dict }: SystemProps) {
   return (
-    <>
-      <nav
-        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between border-b border-stone-pale backdrop-blur-xl transition-all duration-300 ${
-          scrolled
-            ? "px-6 md:px-10 py-3 bg-ivory/[0.97]"
-            : "px-6 md:px-10 py-5 bg-ivory/[0.92]"
-        }`}
-      >
-        <a href="#" className="flex items-center gap-3">
-          <Image
-            src="/Petra-logo.svg"
-            alt="Petra"
-            width={50}
-            height={50}
-            className="w-12 h-12 object-contain"
-          />
-          <span className="font-display text-xl font-bold tracking-institutional uppercase text-carbon">
-            P&nbsp;E&nbsp;T&nbsp;R&nbsp;A
-          </span>
-        </a>
- 
-        <ul className="hidden md:flex items-center gap-10">
-          {NAV_LINKS.map((link) => (
-            <li key={link.href}>
-              <button
-                onClick={() => scrollTo(link.href)}
-                className="font-body text-xs font-semibold tracking-[0.2em] uppercase text-carbon-soft hover:text-crimson transition-colors duration-300 relative group"
-              >
-                {link.label}
-                <span className="absolute -bottom-1 left-0 w-0 h-px bg-crimson group-hover:w-full transition-all duration-300" />
-              </button>
-            </li>
-          ))}
-        </ul>
- 
-        <button
-          className="flex md:hidden flex-col gap-[5px] p-1"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Menu"
-        >
-          <span
-            className={`block w-6 h-[1.5px] bg-carbon transition-all duration-300 ${
-              mobileOpen ? "rotate-45 translate-y-[6.5px]" : ""
-            }`}
-          />
-          <span
-            className={`block w-6 h-[1.5px] bg-carbon transition-all duration-300 ${
-              mobileOpen ? "opacity-0" : ""
-            }`}
-          />
-          <span
-            className={`block w-6 h-[1.5px] bg-carbon transition-all duration-300 ${
-              mobileOpen ? "-rotate-45 -translate-y-[6.5px]" : ""
-            }`}
-          />
-        </button>
-      </nav>
- 
-      {mobileOpen && (
-        <div className="fixed inset-0 bg-ivory z-40 pt-24 px-6 flex flex-col gap-6">
-          {NAV_LINKS.map((link) => (
-            <button
-              key={link.href}
-              onClick={() => scrollTo(link.href)}
-              className="font-display text-3xl font-semibold text-carbon text-left pb-2 border-b border-stone-pale hover:text-crimson transition-colors duration-300"
-            >
-              {link.label}
-            </button>
-          ))}
-        </div>
-      )}
-    </>
+    <section
+      id="sistema"
+      className="bg-ivory-deep py-24 md:py-40 px-6 md:px-10"
+    >
+      <div className="max-w-[1200px] mx-auto">
+        {/* ── BLOCK A: Come Funziona ── */}
+        <FadeIn>
+          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
+            <div>
+              <p className="font-body text-xs font-bold tracking-[0.2em] uppercase text-carbon-soft lg:sticky lg:top-32">
+                {dict.sidebarLabel}
+              </p>
+            </div>
+
+            <div>
+              <h2 className="font-display text-[clamp(1.8rem,3.5vw,3rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-4">
+                {dict.blockA.title}
+              </h2>
+              <p className="font-body text-sm font-light leading-[1.8] text-carbon-soft max-w-[700px] mb-12">
+                {dict.blockA.description}
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-stone-pale">
+                {dict.blockA.steps.map((step, i) => (
+                  <div
+                    key={step.num}
+                    className={`p-8 md:p-10 hover:bg-parchment transition-colors duration-300 group ${
+                      i < 2
+                        ? "border-b md:border-b-0 md:border-r border-stone-pale"
+                        : ""
+                    }`}
+                  >
+                    <div className="font-display text-[3rem] font-extrabold text-stone-pale leading-none mb-5 group-hover:text-crimson transition-colors duration-300">
+                      {step.num}
+                    </div>
+                    <div className="font-body text-xs font-bold tracking-[0.12em] uppercase text-carbon mb-3">
+                      {step.title}
+                    </div>
+                    <div className="font-body text-xs font-light leading-[1.7] text-stone">
+                      {step.desc}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+
+        {/* ── BLOCK B: Il Certificato ── */}
+        <FadeIn>
+          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
+            <div />
+
+            <div>
+              <h2 className="font-display text-[clamp(1.8rem,3.5vw,3rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-4">
+                {dict.blockB.title}
+              </h2>
+              <p className="font-body text-sm font-light leading-[1.8] text-carbon-soft max-w-[700px] mb-12">
+                {dict.blockB.description}
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-stone-pale">
+                {dict.blockB.cards.map((card, i) => (
+                  <div
+                    key={i}
+                    className={`p-8 md:p-10 hover:bg-parchment transition-colors duration-300 group ${
+                      i < 2
+                        ? "border-b md:border-b-0 md:border-r border-stone-pale"
+                        : ""
+                    }`}
+                  >
+                    <div className="w-12 h-12 border-[1.5px] border-crimson flex items-center justify-center font-display text-xl font-extrabold text-crimson mb-6 group-hover:bg-crimson group-hover:text-ivory transition-all duration-300">
+                      {card.icon}
+                    </div>
+                    <div className="font-body text-xs font-bold tracking-[0.12em] uppercase text-carbon mb-3">
+                      {card.title}
+                    </div>
+                    <div className="font-body text-xs font-light leading-[1.7] text-stone">
+                      {card.desc}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+
+        {/* ── BLOCK C: Dove Vanno i Fondi ── */}
+        <FadeIn>
+          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16">
+            <div />
+
+            <div>
+              <h2 className="font-display text-[clamp(1.8rem,3.5vw,3rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-4">
+                {dict.blockC.title}
+              </h2>
+              <p className="font-body text-sm font-light leading-[1.8] text-carbon-soft max-w-[700px] mb-12">
+                {dict.blockC.description}
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-stone-pale">
+                {dict.blockC.features.map((feat, i) => (
+                  <div
+                    key={i}
+                    className={`p-8 md:p-10 hover:bg-parchment transition-colors duration-300 group ${
+                      i === 0
+                        ? "border-b md:border-b-0 md:border-r border-stone-pale"
+                        : ""
+                    }`}
+                  >
+                    <div className="font-body text-xs font-bold tracking-[0.12em] uppercase text-carbon mb-3">
+                      {feat.title}
+                    </div>
+                    <div className="font-body text-xs font-light leading-[1.7] text-stone">
+                      {feat.desc}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+      </div>
+    </section>
   );
 }
 </file>
@@ -1333,12 +4583,187 @@ export default config;
 }
 </file>
 
+<file path=".gitignore">
+frontend/node_modules/
+.next/
+out/
+build/
+.DS_Store
+*.env
+backend/node_modules/
+backend/dist/
+backend/.env
+</file>
+
 <file path="README.md">
 # PETRA
 Securing cultural heritage through a global patronage protocol. Verified. Transparent. Permanent.
 ____________________________________________________________________________________________________________
 Il branch main deve contenere unicamente codice testato, stabile e in produzione.
 Quando si sviluppa una nuova funzionalità si va a creare un branch apposito e quando è finito il testing basterà fare merge con il main branch.
+</file>
+
+<file path="frontend/components/Footer.tsx">
+import Link from "next/link";
+import type { Dictionary } from "@/app/dictionaries";
+
+interface FooterProps {
+  dict: Dictionary["footer"];
+  lang: string;
+}
+
+export default function Footer({ dict, lang }: FooterProps) {
+  return (
+    <footer className="bg-carbon text-stone border-t border-crimson py-24 px-6 md:px-10">
+      <div className="max-w-[1200px] mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20 pb-16 border-b border-white/5">
+          {/* Brand */}
+          <div>
+            <div className="font-display text-2xl font-bold tracking-[0.35em] uppercase text-ivory mb-6">
+              P&nbsp;E&nbsp;T&nbsp;R&nbsp;A
+            </div>
+            <p className="font-body text-xs font-light leading-relaxed text-stone max-w-[280px] opacity-70">
+              {dict.brand}
+            </p>
+          </div>
+
+          {/* Sistema */}
+          <div>
+            <div className="font-body text-[10px] font-bold tracking-[0.25em] uppercase text-crimson mb-8">
+              {dict.systemLabel}
+            </div>
+            <ul className="flex flex-col gap-3.5">
+              {dict.systemLinks.map((label) => (
+                <li key={label}>
+                  <a href="#sistema" className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
+                    {label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Network */}
+          <div>
+            <div className="font-body text-[10px] font-bold tracking-[0.25em] uppercase text-crimson mb-8">
+              {dict.networkLabel}
+            </div>
+            <ul className="flex flex-col gap-3.5">
+              <li>
+                <Link href={`/${lang}/per-gli-enti`} className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
+                  {dict.becomePartner}
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${lang}/trasparenza`} className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
+                  {dict.transparencyLink}
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div>
+            <div className="font-body text-[10px] font-bold tracking-[0.25em] uppercase text-crimson mb-8">
+              {dict.legalLabel}
+            </div>
+            <ul className="flex flex-col gap-3.5">
+              <li>
+                <Link href={`/${lang}/privacy`} className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
+                  {dict.privacyLink}
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${lang}/termini`} className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
+                  {dict.termsLink}
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 opacity-40">
+          <div className="font-body text-[10px] text-stone tracking-widest uppercase">
+            {dict.copyright}
+          </div>
+          <Link
+            href={`/${lang}/privacy`}
+            className="font-body text-[10px] text-stone hover:text-ivory transition-colors duration-500 tracking-widest uppercase"
+          >
+            {dict.cookieText}
+          </Link>
+        </div>
+      </div>
+    </footer>
+  );
+}
+</file>
+
+<file path="frontend/components/Hero.tsx">
+import Image from "next/image";
+import FadeIn from "@/components/FadeIn";
+import type { Dictionary } from "@/app/dictionaries";
+
+interface HeroProps {
+  dict: Dictionary["hero"];
+}
+
+export default function Hero({ dict }: HeroProps) {
+  return (
+    <section className="flex flex-col items-center w-full bg-ivory">
+      <div className="min-h-screen w-full flex flex-col items-center justify-center pt-20 px-6 md:px-10">
+        <FadeIn>
+          <div className="mb-0 flex justify-center">
+            <Image
+              src="/Petra-logo.svg"
+              alt="Petra"
+              width={320}
+              height={320}
+              className="w-[240px] h-[240px] md:w-[320px] md:h-[320px] object-contain opacity-[0.95]"
+            />
+          </div>
+        </FadeIn>
+
+        <FadeIn delay={200}>
+          <h1 className="font-display text-[clamp(3rem,7vw,6.5rem)] font-bold tracking-[0.35em] uppercase text-carbon text-center">
+            P&nbsp;E&nbsp;T&nbsp;R&nbsp;A
+          </h1>
+        </FadeIn>
+
+        <FadeIn delay={400}>
+          <p className="mt-4 font-body text-xs md:text-sm tracking-wide uppercase text-carbon-soft text-center px-4">
+            {dict.subtitle}
+          </p>
+        </FadeIn>
+      </div>
+
+      <div className="w-full bg-ivory-deep flex flex-col items-center px-6 md:px-10 py-32 border-t border-stone-pale/50">
+        <FadeIn>
+          <div className="w-full max-w-[1200px] h-px bg-carbon/10 mb-16" />
+        </FadeIn>
+
+        <div className="w-full max-w-[1200px] grid grid-cols-1 md:grid-cols-3 gap-0 border border-carbon/10">
+          {dict.pillars.map((pillar, i) => (
+            <FadeIn key={i} delay={i * 150}>
+              <div
+                className={`p-10 bg-ivory/50 hover:bg-white transition-all duration-500 ease-in-out group h-full ${
+                  i < 2 ? "border-b md:border-b-0 md:border-r border-carbon/10" : ""
+                }`}
+              >
+                <h3 className="font-body text-xs font-bold tracking-[0.2em] uppercase text-crimson mb-6 group-hover:translate-x-1 transition-transform duration-500">
+                  {pillar.eyebrow}
+                </h3>
+                <p className="font-body text-sm font-light leading-[1.85] text-carbon-soft">
+                  {pillar.text}
+                </p>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 </file>
 
 </files>

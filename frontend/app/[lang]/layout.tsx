@@ -3,8 +3,7 @@ import type { Metadata } from "next";
 import { DM_Sans, Playfair_Display } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import Analytics from "@/components/Analytics";
-import ServiceWorker from "@/components/ServiceWorker";
+
 import { getDictionary } from "@/app/dictionaries";
 import type { Locale } from "@/i18n.config";
 
@@ -77,8 +76,7 @@ export default async function RootLayout({
           {children}
         </main>
         <Footer dict={dict.footer} lang={params.lang} />
-        <Analytics />
-        <ServiceWorker />
+
       </body>
     </html>
   );

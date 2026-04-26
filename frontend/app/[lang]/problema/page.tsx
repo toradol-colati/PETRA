@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import FadeIn from "@/components/FadeIn";
-import ImpactChart from "@/components/ImpactChart";
 import { getDictionary } from "@/app/dictionaries";
 import type { Locale } from "@/i18n.config";
 
@@ -10,9 +9,12 @@ export async function generateMetadata({
   params: { lang: Locale };
 }): Promise<Metadata> {
   const dict = await getDictionary(params.lang);
+  const introText = Array.isArray(dict.problem.intro)
+    ? dict.problem.intro.join(" ")
+    : dict.problem.intro;
   return {
     title: dict.problem.title,
-    description: dict.problem.intro.substring(0, 155),
+    description: introText.substring(0, 155),
   };
 }
 
@@ -39,9 +41,13 @@ export default async function ProblemaPage({
               <h1 className="font-display text-[clamp(2rem,4vw,3.5rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-8">
                 {t.title}
               </h1>
-              <p className="font-body text-base font-light leading-[1.9] text-carbon max-w-[700px]">
-                {t.intro}
-              </p>
+              <div className="flex flex-col gap-6 max-w-[700px]">
+                {(Array.isArray(t.intro) ? t.intro : [t.intro]).map((paragraph, i) => (
+                  <p key={i} className="font-body text-base font-light leading-[1.9] text-carbon">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
             </div>
           </div>
         </FadeIn>
@@ -114,16 +120,6 @@ export default async function ProblemaPage({
                   {t.note}
                 </p>
               </div>
-            </div>
-          </div>
-        </FadeIn>
-
-        {/* Impact projection chart */}
-        <FadeIn>
-          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16">
-            <div />
-            <div>
-              <ImpactChart dict={t.impact} />
             </div>
           </div>
         </FadeIn>

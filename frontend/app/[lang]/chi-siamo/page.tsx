@@ -87,54 +87,6 @@ export default async function ChiSiamoPage({
           </div>
         </FadeIn>
 
-        {/* From research to protocol */}
-        <FadeIn>
-          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
-            <div />
-            <div>
-              <h2 className="font-display text-[clamp(1.8rem,3.5vw,3rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-12">
-                {t.thesisTitle}
-              </h2>
-              <div className="border-l-2 border-crimson pl-8 max-w-[700px]">
-                <p className="font-body text-sm font-light leading-[1.9] text-carbon-soft">
-                  {t.thesis}
-                </p>
-              </div>
-            </div>
-          </div>
-        </FadeIn>
-
-        {/* Support network */}
-        <FadeIn>
-          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
-            <div />
-            <div>
-              <h2 className="font-display text-[clamp(1.8rem,3.5vw,3rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-12">
-                {t.supportTitle}
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-stone-pale">
-                {t.supporters.map((s, i) => (
-                  <div
-                    key={s.name}
-                    className={`p-8 md:p-10 hover:bg-parchment transition-colors duration-300 group ${
-                      i === 0
-                        ? "border-b md:border-b-0 md:border-r border-stone-pale"
-                        : ""
-                    }`}
-                  >
-                    <div className="font-body text-sm font-bold tracking-[0.12em] uppercase text-carbon mb-3 group-hover:text-crimson transition-colors duration-300">
-                      {s.name}
-                    </div>
-                    <p className="font-body text-sm font-light leading-[1.9] text-carbon-soft">
-                      {s.desc}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </FadeIn>
-
         {/* Contact */}
         <FadeIn>
           <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16">

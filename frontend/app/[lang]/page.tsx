@@ -15,7 +15,7 @@ export default async function Home({
     <>
       <Hero dict={dict.hero} />
       <System dict={dict.system} />
-      <Network dict={dict.network} />
+      <Network dict={dict.network} lang={params.lang} />
     </>
   );
 }

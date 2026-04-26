@@ -10,7 +10,7 @@ export default function Footer({ dict, lang }: FooterProps) {
   return (
     <footer className="bg-carbon text-stone border-t border-crimson py-24 px-6 md:px-10">
       <div className="max-w-[1200px] mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20 pb-16 border-b border-white/5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 mb-20 pb-16 border-b border-white/5">
           {/* Brand */}
           <div>
             <div className="font-display text-2xl font-bold tracking-[0.35em] uppercase text-ivory mb-6">
@@ -44,47 +44,8 @@ export default function Footer({ dict, lang }: FooterProps) {
             </div>
             <ul className="flex flex-col gap-3.5">
               <li>
-                <a href="#network" className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
-                  {dict.activeProjects}
-                </a>
-              </li>
-              <li>
-                <a href="#network" className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
-                  {dict.becomePartner}
-                </a>
-              </li>
-              <li>
-                <a href="mailto:info@petra-protocol.org" className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
-                  {dict.contacts}
-                </a>
-              </li>
-              <li>
                 <Link href={`/${lang}/per-gli-enti`} className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
-                  {dict.institutionsLink}
-                </Link>
-              </li>
-              <li>
-                <Link href={`/${lang}/trasparenza`} className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
-                  {dict.transparencyLink}
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Legal */}
-          <div>
-            <div className="font-body text-[10px] font-bold tracking-[0.25em] uppercase text-crimson mb-8">
-              {dict.legalLabel}
-            </div>
-            <ul className="flex flex-col gap-3.5">
-              <li>
-                <Link href={`/${lang}/privacy`} className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
-                  {dict.privacyLink}
-                </Link>
-              </li>
-              <li>
-                <Link href={`/${lang}/termini`} className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
-                  {dict.termsLink}
+                  {dict.becomePartner}
                 </Link>
               </li>
             </ul>
@@ -95,12 +56,6 @@ export default function Footer({ dict, lang }: FooterProps) {
           <div className="font-body text-[10px] text-stone tracking-widest uppercase">
             {dict.copyright}
           </div>
-          <Link
-            href={`/${lang}/privacy`}
-            className="font-body text-[10px] text-stone hover:text-ivory transition-colors duration-500 tracking-widest uppercase"
-          >
-            {dict.cookieText}
-          </Link>
         </div>
       </div>
     </footer>
