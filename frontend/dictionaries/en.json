@@ -87,15 +87,22 @@
     "brand": "preserving history through innovation.",
     "systemLabel": "Protocol",
     "systemLinks": [
-      "How it works",
-      "The Certificate",
-      "Where Funds Go"
+      { "id": "come-funziona", "label": "How it works" },
+      { "id": "il-certificato", "label": "The Certificate" },
+      { "id": "dove-vanno-i-fondi", "label": "Where Funds Go" }
     ],
-    "networkLabel": "Network",
-    "becomePartner": "Become a Partner",
-    "petraLabel": "Petra",
-    "problemLink": "The Problem",
-    "aboutLink": "About Us",
+    "problemLabel": "The Problem",
+    "problemLinks": [
+      { "id": "intro", "label": "Summary" },
+      { "id": "diagnosi", "label": "What happens?" },
+      { "id": "ostacoli", "label": "Three Obstacles" }
+    ],
+    "aboutLabel": "About Us",
+    "aboutLinks": [
+      { "id": "intro", "label": "Summary" },
+      { "id": "missione", "label": "The Mission" },
+      { "id": "contatti", "label": "Contacts" }
+    ],
     "copyright": "© 2026 PETRA — Protocol for Cultural Heritage."
   },
   "problem": {

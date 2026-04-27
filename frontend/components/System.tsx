@@ -14,7 +14,7 @@ export default function System({ dict }: SystemProps) {
       <div className="max-w-[1200px] mx-auto">
         {/* ── BLOCK A: Come Funziona ── */}
         <FadeIn>
-          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-6 lg:gap-16 mb-20 md:mb-32">
+          <div id="come-funziona" className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-6 lg:gap-16 mb-20 md:mb-32">
             <div>
               <p className="font-body text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase text-carbon-soft lg:sticky lg:top-32 mb-4 lg:mb-0">
                 {dict.sidebarLabel}
@@ -57,7 +57,7 @@ export default function System({ dict }: SystemProps) {
 
         {/* ── BLOCK B: Il Certificato ── */}
         <FadeIn>
-          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-6 lg:gap-16 mb-20 md:mb-32">
+          <div id="il-certificato" className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-6 lg:gap-16 mb-20 md:mb-32">
             <div />
 
             <div>
@@ -96,7 +96,7 @@ export default function System({ dict }: SystemProps) {
 
         {/* ── BLOCK C: Dove Vanno i Fondi ── */}
         <FadeIn>
-          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-6 lg:gap-16">
+          <div id="dove-vanno-i-fondi" className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-6 lg:gap-16">
             <div />
 
             <div>

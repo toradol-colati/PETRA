@@ -28,7 +28,7 @@ export default async function ChiSiamoPage({
       <div className="max-w-[1200px] mx-auto">
         {/* Opening question */}
         <FadeIn>
-          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
+          <div id="intro" className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
             <div>
               <p className="font-body text-xs font-bold tracking-[0.2em] uppercase text-carbon-soft lg:sticky lg:top-32">
                 {t.title}
@@ -47,7 +47,7 @@ export default async function ChiSiamoPage({
 
         {/* Mission statement */}
         <FadeIn>
-          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
+          <div id="missione" className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
             <div />
             <div>
               <h2 className="font-display text-[clamp(1.8rem,3.5vw,3rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-12">
@@ -64,7 +64,7 @@ export default async function ChiSiamoPage({
 
         {/* Contact */}
         <FadeIn>
-          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16">
+          <div id="contatti" className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16">
             <div />
             <div>
               <h2 className="font-display text-[clamp(1.8rem,3.5vw,3rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-8">
