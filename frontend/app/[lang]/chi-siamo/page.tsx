@@ -60,32 +60,7 @@ export default async function ChiSiamoPage({
           </div>
         </FadeIn>
 
-        {/* Team */}
-        <FadeIn>
-          <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
-            <div />
-            <div>
-              <h2 className="font-display text-[clamp(1.8rem,3.5vw,3rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-12">
-                {t.teamTitle}
-              </h2>
-              <div className="border border-stone-pale max-w-[600px]">
-                {t.team.map((member) => (
-                  <div key={member.name} className="p-8 md:p-10">
-                    <div className="font-body text-sm font-bold tracking-[0.12em] uppercase text-carbon mb-2">
-                      {member.name}
-                    </div>
-                    <div className="font-body text-[10px] font-bold tracking-[0.25em] uppercase text-crimson mb-6">
-                      {member.role}
-                    </div>
-                    <p className="font-body text-sm font-light leading-[1.9] text-carbon-soft">
-                      {member.bio}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </FadeIn>
+
 
         {/* Contact */}
         <FadeIn>

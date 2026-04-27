@@ -132,14 +132,7 @@
     "intro": "Petra was born from a simple question: why the people who visit art cities around the world every year don't contribute directly to the conservation of what they came to see?",
     "missionTitle": "The mission",
     "mission": "We are not a restoration association. We are not a crowdfunding platform. Petra is a protocol — a digital infrastructure that connects the tourists to the maintenance need. A QR code. A donation. A cryptographic certificate proving where every cent went. Our goal is to make contributing to beauty as natural as taking a photo.",
-    "teamTitle": "Who's behind it",
-    "team": [
-      {
-        "name": "Umberto Toraldo",
-        "role": "Founder",
-        "bio": "Economics student. He dedicated his bachelor's thesis to the ex-ante evaluation of crowdfunding as a financing tool for private architectural heritage in Venice. Petra is the operational translation of that research: an attempt to field-test a hypothesis grounded in academic research."
-      }
-    ],
+
     "contactTitle": "Let's talk",
     "email": "info@petra-protocol.org",
     "linkedin": "LinkedIn"
