@@ -23,7 +23,6 @@ export default function Navbar({ dict, lang }: NavbarProps) {
   const navLinks = [
     { href: "#mission", label: dict.home },
     { href: `/${lang}/protocollo`, label: dict.protocol },
-    { href: `/${lang}/per-gli-enti`, label: dict.network },
     { href: `/${lang}/problema`, label: dict.problem },
     { href: `/${lang}/chi-siamo`, label: dict.about },
   ];

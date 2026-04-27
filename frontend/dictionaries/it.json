@@ -83,18 +83,7 @@
       ]
     }
   },
-  "network": {
-    "sidebarLabel": "Network",
-    "partnerTitle": "Diventa Partner",
-    "partners": [
-      {
-        "icon": "◈",
-        "title": "Partner e Collaboratori",
-        "desc": "Verifica la possibilità di collaborare con Petra o allinea il tuo brand alla tutela del patrimonio culturale.",
-        "link": "Collabora o diventa partner"
-      }
-    ]
-  },
+
   "footer": {
     "brand": "preserviamo la storia tramite l'innovazione.",
     "systemLabel": "Protocollo",
@@ -152,33 +141,15 @@
     "email": "info@petra-protocol.org",
     "linkedin": "LinkedIn"
   },
-  "institutions": {
-    "title": "Diventa Partner",
-    "intro": "Petra offre alle amministrazioni locali e agli enti culturali un'infrastruttura digitale per mobilitare micro-donazioni turistiche verso il restauro del patrimonio architettonico nel proprio territorio.",
-    "howTitle": "Come funziona per voi",
-    "steps": [
-      {
-        "num": "01",
-        "title": "Partnership",
-        "desc": "Firmiamo un accordo di collaborazione. Petra fornisce l'infrastruttura, l'ente identifica i cantieri."
-      },
-      {
-        "num": "02",
-        "title": "Operatività",
-        "desc": "QR code installati sui cantieri. Le donazioni arrivano direttamente al vostro conto via Stripe Connect."
-      },
-      {
-        "num": "03",
-        "title": "Dati",
-        "desc": "Ricevete reportistica trimestrale e dati di willingness-to-pay dei turisti, utilizzabili per le vostre decisioni di policy."
-      }
-    ],
-    "cta": "Scrivici per una valutazione"
-  },
+
   "protocolBanner": {
     "title": "Diventa micro-mecenate",
     "cardTitle": "Come funziona",
     "desc": "Scopri come donare, certificare e verificare che i fondi contribuiscano ai restauri",
     "link": "Scopri di più"
+  },
+  "contactBanner": {
+    "text": "Petra è in fase di costruzione del primo progetto pilota. Se sei interessato a collaborare — come ente, come operatore, come ricercatore — scrivici.",
+    "cta": "Scrivici"
   }
 }

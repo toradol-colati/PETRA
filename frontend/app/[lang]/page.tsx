@@ -1,6 +1,6 @@
 import Hero from "@/components/Hero";
 import ProtocolBanner from "@/components/ProtocolBanner";
-import Network from "@/components/Network";
+import ContactBanner from "@/components/ContactBanner";
 import { getDictionary } from "@/app/dictionaries";
 import type { Locale } from "@/i18n.config";
 
@@ -15,7 +15,7 @@ export default async function Home({
     <>
       <Hero dict={dict.hero} />
       <ProtocolBanner dict={dict} lang={params.lang} />
-      <Network dict={dict.network} lang={params.lang} />
+      <ContactBanner dict={dict.contactBanner} />
     </>
   );
 }

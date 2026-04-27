@@ -83,18 +83,7 @@
       ]
     }
   },
-  "network": {
-    "sidebarLabel": "Network",
-    "partnerTitle": "Become a Partner",
-    "partners": [
-      {
-        "icon": "◈",
-        "title": "Partners & Collaborators",
-        "desc": "Explore the possibility of collaborating with Petra or align your brand with cultural heritage preservation.",
-        "link": "Collaborate or become a partner"
-      }
-    ]
-  },
+
   "footer": {
     "brand": "preserving history through innovation.",
     "systemLabel": "Protocol",
@@ -156,33 +145,15 @@
     "email": "info@petra-protocol.org",
     "linkedin": "LinkedIn"
   },
-  "institutions": {
-    "title": "Become a Partner",
-    "intro": "Petra offers local administrations and cultural institutions a digital infrastructure to mobilize tourist micro-donations towards the restoration of architectural heritage in their territory.",
-    "howTitle": "How it works for you",
-    "steps": [
-      {
-        "num": "01",
-        "title": "Partnership",
-        "desc": "We sign a collaboration agreement. Petra provides the infrastructure, the institution identifies the construction sites."
-      },
-      {
-        "num": "02",
-        "title": "Operations",
-        "desc": "QR codes installed at construction sites. Donations go directly to your account via Stripe Connect."
-      },
-      {
-        "num": "03",
-        "title": "Data",
-        "desc": "You receive quarterly reports and tourist willingness-to-pay data, usable for your policy decisions."
-      }
-    ],
-    "cta": "Write to us for an assessment"
-  },
+
   "protocolBanner": {
     "title": "Become a micro-patron",
     "cardTitle": "How it works",
     "desc": "Discover how to donate, certify, and verify that funds contribute to restorations",
     "link": "Learn more"
+  },
+  "contactBanner": {
+    "text": "Petra is currently building its pilot project. If you are interested in collaborating — as an institution, operator, or researcher — write to us.",
+    "cta": "Write to us"
   }
 }

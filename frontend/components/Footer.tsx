@@ -11,7 +11,7 @@ export default function Footer({ dict, lang }: FooterProps) {
   return (
     <footer className="bg-carbon text-stone border-t border-crimson py-24 px-6 md:px-10">
       <div className="max-w-[1200px] mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 mb-20 pb-16 border-b border-white/5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 mb-20 pb-16 border-b border-white/5">
           {/* Brand */}
           <div>
             <div className="font-display text-2xl font-bold tracking-[0.35em] uppercase text-ivory mb-6">
@@ -64,19 +64,6 @@ export default function Footer({ dict, lang }: FooterProps) {
             </ul>
           </div>
 
-          {/* Network */}
-          <div>
-            <div className="font-body text-[10px] font-bold tracking-[0.25em] uppercase text-crimson mb-8">
-              {dict.networkLabel}
-            </div>
-            <ul className="flex flex-col gap-3.5">
-              <li>
-                <Link href={`/${lang}/per-gli-enti`} className="font-body text-xs text-stone hover:text-ivory transition-colors duration-500">
-                  {dict.becomePartner}
-                </Link>
-              </li>
-            </ul>
-          </div>
         </div>
 
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 opacity-40">
