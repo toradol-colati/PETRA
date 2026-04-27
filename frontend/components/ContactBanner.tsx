@@ -8,7 +8,7 @@ interface ContactBannerProps {
 
 export default function ContactBanner({ dict }: ContactBannerProps) {
   return (
-    <section id="contact" className="bg-ivory py-20 px-6 md:px-10">
+    <section id="contact" className="bg-ivory-deep py-20 px-6 md:px-10">
       <div className="max-w-[1200px] mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-6 lg:gap-20">
           {/* Left Column: Sidebar Label */}

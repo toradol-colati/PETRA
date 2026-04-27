@@ -9,9 +9,9 @@ interface FooterProps {
 
 export default function Footer({ dict, lang }: FooterProps) {
   return (
-    <footer className="bg-carbon text-stone border-t border-crimson py-24 px-6 md:px-10">
+    <footer className="bg-carbon text-stone border-t border-crimson py-16 px-6 md:px-10">
       <div className="max-w-[1200px] mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 mb-20 pb-16 border-b border-white/5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 mb-12 pb-12 border-b border-white/5">
           {/* Brand */}
           <div>
             <div className="font-display text-2xl font-bold tracking-[0.35em] uppercase text-ivory mb-6">
