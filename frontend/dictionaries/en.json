@@ -83,7 +83,6 @@
       ]
     }
   },
-
   "footer": {
     "brand": "preserving history through innovation.",
     "systemLabel": "Protocol",
@@ -145,7 +144,6 @@
     "email": "info@petra-protocol.org",
     "linkedin": "LinkedIn"
   },
-
   "protocolBanner": {
     "title": "Become a micro-patron",
     "cardTitle": "How it works",
@@ -155,7 +153,7 @@
   "network": {
     "sidebarLabel": "Network",
     "ctaTitle": "Work with us",
-    "ctaDescription": "Petra is building its first pilot project in Venice. We are looking for local institutions, cultural organizations and territorial operators willing to experiment the model with us. We are not asking for formal commitments — we are asking for a conversation.",
+    "ctaDescription": "Petra is building its first pilot project. We are looking for local institutions, cultural organizations and territorial operators willing to experiment the model with us. We are not asking for formal commitments — we are asking for a conversation.",
     "ctaButton": "Get in touch"
   }
 }

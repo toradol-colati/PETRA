@@ -83,7 +83,6 @@
       ]
     }
   },
-
   "footer": {
     "brand": "preserviamo la storia tramite l'innovazione.",
     "systemLabel": "Protocollo",
@@ -141,7 +140,6 @@
     "email": "info@petra-protocol.org",
     "linkedin": "LinkedIn"
   },
-
   "protocolBanner": {
     "title": "Diventa micro-mecenate",
     "cardTitle": "Come funziona",
@@ -151,7 +149,7 @@
   "network": {
     "sidebarLabel": "Network",
     "ctaTitle": "Collabora con noi",
-    "ctaDescription": "Petra è in fase di costruzione del primo progetto pilota a Venezia. Cerchiamo enti, istituzioni culturali e operatori del territorio disposti a sperimentare il modello con noi. Non chiediamo impegni formali — chiediamo una conversazione.",
+    "ctaDescription": "Petra è in fase di costruzione del primo progetto pilota. Cerchiamo enti, istituzioni culturali e operatori del territorio disposti a sperimentare il modello con noi. Non chiediamo impegni formali — chiediamo una conversazione.",
     "ctaButton": "Scrivici"
   }
 }
