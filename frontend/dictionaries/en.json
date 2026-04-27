@@ -152,8 +152,10 @@
     "desc": "Discover how to donate, certify, and verify that funds contribute to restorations",
     "link": "Learn more"
   },
-  "contactBanner": {
-    "text": "Petra is currently building its pilot project. If you are interested in collaborating — as an institution, operator, or researcher — write to us.",
-    "cta": "Write to us"
+  "network": {
+    "sidebarLabel": "Network",
+    "ctaTitle": "Work with us",
+    "ctaDescription": "Petra is building its first pilot project in Venice. We are looking for local institutions, cultural organizations and territorial operators willing to experiment the model with us. We are not asking for formal commitments — we are asking for a conversation.",
+    "ctaButton": "Get in touch"
   }
 }

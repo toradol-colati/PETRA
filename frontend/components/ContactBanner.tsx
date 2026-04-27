@@ -3,26 +3,43 @@ import FadeIn from "@/components/FadeIn";
 import type { Dictionary } from "@/app/dictionaries";
 
 interface ContactBannerProps {
-  dict: Dictionary["contactBanner"];
+  dict: Dictionary["network"];
 }
 
 export default function ContactBanner({ dict }: ContactBannerProps) {
   return (
-    <section className="bg-carbon py-24 px-6 md:px-10 border-t border-white/5">
-      <div className="max-w-[1200px] mx-auto text-center">
-        <FadeIn>
-          <div className="max-w-[800px] mx-auto">
-            <p className="font-display text-[clamp(1.2rem,3vw,2rem)] leading-snug text-ivory mb-12">
-              {dict.text}
+    <section id="contact" className="bg-ivory py-20 px-6 md:px-10">
+      <div className="max-w-[1200px] mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-6 lg:gap-20">
+          {/* Left Column: Sidebar Label */}
+          <div>
+            <p className="font-body text-xs font-bold tracking-[0.2em] uppercase text-carbon-soft lg:sticky lg:top-32 mb-4 lg:mb-0">
+              {dict.sidebarLabel}
             </p>
-            <Link
-              href="mailto:petra.veneta@gmail.com"
-              className="inline-block border border-crimson/50 px-10 py-5 text-crimson font-body text-xs font-bold uppercase tracking-widest hover:bg-crimson hover:text-ivory transition-all duration-500"
-            >
-              {dict.cta}
-            </Link>
           </div>
-        </FadeIn>
+
+          {/* Right Column: CTA Content */}
+          <div>
+            <FadeIn>
+              <h2 className="font-display text-[clamp(1.5rem,4vw,3.5rem)] font-bold text-carbon mb-6 tracking-tight">
+                {dict.ctaTitle}
+              </h2>
+              
+              <p className="font-body text-sm font-light leading-[1.9] text-carbon-soft max-w-[700px]">
+                {dict.ctaDescription}
+              </p>
+
+              <div className="mt-10">
+                <a
+                  href="mailto:info@petra-protocol.org"
+                  className="inline-block font-body text-xs font-bold tracking-widest uppercase text-carbon border border-carbon px-12 py-5 hover:bg-carbon hover:text-ivory transition-all duration-500"
+                >
+                  {dict.ctaButton}
+                </a>
+              </div>
+            </FadeIn>
+          </div>
+        </div>
       </div>
     </section>
   );

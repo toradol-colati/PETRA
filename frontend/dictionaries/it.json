@@ -148,8 +148,10 @@
     "desc": "Scopri come donare, certificare e verificare che i fondi contribuiscano ai restauri",
     "link": "Scopri di più"
   },
-  "contactBanner": {
-    "text": "Petra è in fase di costruzione del primo progetto pilota. Se sei interessato a collaborare — come ente, come operatore, come ricercatore — scrivici.",
-    "cta": "Scrivici"
+  "network": {
+    "sidebarLabel": "Network",
+    "ctaTitle": "Collabora con noi",
+    "ctaDescription": "Petra è in fase di costruzione del primo progetto pilota a Venezia. Cerchiamo enti, istituzioni culturali e operatori del territorio disposti a sperimentare il modello con noi. Non chiediamo impegni formali — chiediamo una conversazione.",
+    "ctaButton": "Scrivici"
   }
 }
