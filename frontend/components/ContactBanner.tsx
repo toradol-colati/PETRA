@@ -31,7 +31,7 @@ export default function ContactBanner({ dict }: ContactBannerProps) {
 
               <div className="mt-10">
                 <a
-                  href="mailto:info@petra-protocol.org"
+                  href="mailto:petra.veneta@gmail.com"
                   className="inline-block font-body text-xs font-bold tracking-widest uppercase text-carbon border border-carbon px-12 py-5 hover:bg-carbon hover:text-ivory transition-all duration-500"
                 >
                   {dict.ctaButton}
