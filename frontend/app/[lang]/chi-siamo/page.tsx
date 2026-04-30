@@ -29,11 +29,7 @@ export default async function ChiSiamoPage({
         {/* Opening question */}
         <FadeIn>
           <div id="intro" className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
-            <div>
-              <p className="font-body text-xs font-bold tracking-[0.2em] uppercase text-carbon-soft lg:sticky lg:top-32">
-                {t.title}
-              </p>
-            </div>
+            <div />
             <div>
               <h1 className="font-display text-[clamp(2rem,4vw,3.5rem)] font-bold leading-[1.15] tracking-wide text-carbon mb-8">
                 {t.title}

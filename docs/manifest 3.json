@@ -1,0 +1,16 @@
+{
+  "name": "PETRA",
+  "short_name": "PETRA",
+  "description": "Infrastruttura per la conservazione del patrimonio culturale",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FBFBF9",
+  "theme_color": "#141414",
+  "icons": [
+    {
+      "src": "/Petra-logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

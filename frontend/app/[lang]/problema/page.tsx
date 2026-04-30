@@ -34,7 +34,7 @@ export default async function ProblemaPage({
           <div id="intro" className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 mb-24 md:mb-32">
             <div>
               <p className="font-body text-xs font-bold tracking-[0.2em] uppercase text-carbon-soft lg:sticky lg:top-32">
-                {t.title}
+                {t.sidebarLabel}
               </p>
             </div>
             <div>

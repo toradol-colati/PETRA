@@ -106,6 +106,7 @@
     "copyright": "© 2026 PETRA — Protocol for Cultural Heritage."
   },
   "problem": {
+    "sidebarLabel": "The Problem",
     "title": "In Art Cities",
     "intro": [
       "Look up. The architecture that define these places — the reason millions of people cross the world — is falling apart. Not through negligence, but through a systemic failure.",

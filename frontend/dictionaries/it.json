@@ -106,6 +106,7 @@
     "copyright": "© 2026 PETRA — Protocol for Cultural Heritage."
   },
   "problem": {
+    "sidebarLabel": "Il Problema",
     "title": "Nelle Città d'Arte",
     "intro": "Alza lo sguardo. L'architettura che definisce questi luoghi — il motivo per cui le persone attraversano il mondo — sta cadendo a pezzi. Non per incuria, ma per un difetto di sistema.",
     "diagnosisTitle": "Che succede?",
