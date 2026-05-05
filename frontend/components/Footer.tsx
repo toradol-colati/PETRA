@@ -21,7 +21,7 @@ export default function Footer({ dict, lang }: FooterProps) {
               {dict.brand}
             </p>
             <Image
-              src="/repo-PETRA/Petra-logo.svg"
+              src="/Petra-logo.svg"
               alt="Petra"
               width={160}
               height={160}
